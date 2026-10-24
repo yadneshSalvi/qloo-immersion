@@ -13,3 +13,8 @@ Local verification on **24 October 2026** used Node 22.22.3, pnpm 10.15.0, Next.
 - Browser result fixtures are not research participants. Source-question scores are not certified language levels; immediate word recall is not a measured long-term retention gain.
 
 The current sample contains no connected Qloo/model worker. API/provider integration, authentic live affinity, external content coverage, speech scoring, teaching quality, and public deployment are outside these test claims.
+
+
+An isolated adapter preparation check on **24 October 2026** passed `pnpm typecheck`, `pnpm lint`, `pnpm build`, and `pnpm test` (**26 tests: 14 domain/corpus and 12 Qloo boundary tests**). This check did not rerun database or browser journeys and changed no UI behavior. The adapter pins official harness 0.1.26 and MCP SDK 1.32.2. Boundary tests cover candidate-only projection, all six official statuses, malformed responses, suppression of provider prose/learner references, one-to-ten unique UUID validation, all nine entity option types, explicit-key gating, pre-aborted cancellation, invalid timeout/endpoint rejection, and the subprocess environment allowlist.
+
+`pnpm qloo:probe` ran the installed harness locally with an empty credential environment. It returned `ready: false`, `liveCallMade: false`, contract version `1.0.0`, checksum `sha256:762bdcc5e14ff797b6de739d2658a83f78af35e68d7a5a3449455be6046924f5`, and ten advertised tools including `qloo_rank`. This establishes local MCP startup/capability inspection only. Authentication, a live rank response, in-flight timeout/cancellation behavior, shared quota limiting, durable worker integration, and reviewed catalog mappings remain unverified or unimplemented.

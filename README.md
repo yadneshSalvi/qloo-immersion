@@ -108,9 +108,13 @@ The tests cover source-grounded question assignment, age validation, ownership, 
 
 ## Live Qloo / model work that remains
 
-There is **no connected official Qloo adapter or durable provider worker in this sample milestone**. The UI and health endpoint deliberately say live discovery and model feedback are unavailable. `QLOO_API_KEY` is a reserved server-side configuration placeholder. These steps are required before enabling live features:
+An isolated official Qloo MCP adapter is **prepared but not connected to discovery** in `src/integrations/qloo.ts`. It pins `@qloo/qloo-harness` 0.1.26 and MCP SDK 1.32.2 and supports the harness's nine entity types. It accepts one to ten unique confirmed UUIDs per signals/options array, releases only supplied candidate IDs, preserves all six statuses, and suppresses upstream prose. It uses a fixed hackathon endpoint, an allowlisted subprocess environment, an explicit API key, and bounded timeout/cancellation, with no sample substitution or automatic retries. This is a Node service boundary, not a browser or serverless request module.
 
-1. Install and capability-test the pinned official Qloo harness in a persistent worker, including authentication, error envelopes, quotas, tool contracts, and bounded timeouts. Harness readiness alone is not a successful authenticated discovery call.
+`pnpm qloo:probe` inspects the installed local harness with an empty credential environment. It makes no authenticated API call and should report `ready: false` and `liveCallMade: false`; it does not test API credentials or account entitlement. `pnpm test` includes deterministic provider-boundary tests. No live Qloo call has been verified for IMMERSION.
+
+The UI and health endpoint continue to report live discovery and model feedback as unavailable. There is no durable provider worker, shared quota limiter, entity confirmation flow, or reviewed catalog mapping. These steps are required before enabling live features:
+
+1. Connect the prepared adapter to a persistent worker and verify authentication, error envelopes, quotas, and tool contracts with the actual account. Harness readiness alone is not a successful authenticated discovery call.
 2. Implement explicit entity disambiguation and user confirmation. Create independently reviewed mappings from approved content to real Qloo entities, preserving what the relationship means. No sample piece currently claims such a mapping.
 3. Retrieve or rank a deterministic eligible shortlist under the harness’s verified contract. The inspected 0.1.26 contract permits at most ten signals/options per ranking call and workflow outputs of at most twenty. Reverify these limits against the actual pinned runtime; do not merge normalized scores across incomparable batches or call them enjoyment probabilities.
 4. Add durable run leasing, a shared credential-level quota limiter, bounded retries, cancellation, sanitized provider provenance, outage states, and an equivalent editorial baseline. The existing local activity log is a deterministic application trace, not a model-agent or Qloo tool trace.
