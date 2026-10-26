@@ -188,6 +188,18 @@ export function SessionStudio({ initialSession }: { initialSession: SessionView 
           </div>
         ))}
       </div>
+      {session.support === 'extra' && session.state !== 'completed' && (
+        <div className="extra-support-note container" role="note">
+          <Lightbulb size={21} aria-hidden="true" />
+          <div>
+            <strong>Extra support is on</strong>
+            <p>
+              English starts open. During practice, hints and the story are ready beside your
+              questions. Close them whenever you prefer.
+            </p>
+          </div>
+        </div>
+      )}
       {session.state === 'completed' ? (
         <section className="completion container">
           <div className="completion-art">
@@ -295,6 +307,7 @@ export function SessionStudio({ initialSession }: { initialSession: SessionView 
               segmentId={segment.id}
               seekToken={audioSeekToken}
               onSegmentChange={setAudioSegmentId}
+              defaultRate={session.support === 'extra' ? '0.75' : '1'}
             />
             <div className="passage-tabs" role="group" aria-label="Source passages">
               {source.segments.map((s, i) => (
@@ -428,7 +441,7 @@ export function SessionStudio({ initialSession }: { initialSession: SessionView 
                 : 'A little understanding. A little practice.'}
             </h2>
             <Artwork cluster={source.cluster} palette={source.palette} />
-            <details className="practice-source">
+            <details className="practice-source" open={session.support === 'extra'}>
               <summary>
                 <BookOpen size={16} />
                 Keep the source close
@@ -632,7 +645,11 @@ export function SessionStudio({ initialSession }: { initialSession: SessionView 
                   </div>
                 ) : (
                   <>
-                    <details className="hint-detail">
+                    <details
+                      key={question.id}
+                      className="hint-detail"
+                      open={session.support === 'extra'}
+                    >
                       <summary>Need a small hint?</summary>
                       <p>{question.hint}</p>
                     </details>
@@ -716,7 +733,11 @@ export function SessionStudio({ initialSession }: { initialSession: SessionView 
                     </div>
                   </div>
                 ) : (
-                  <details className="hint-detail">
+                  <details
+                    key={practice.id}
+                    className="hint-detail"
+                    open={session.support === 'extra'}
+                  >
                     <summary>A small hint</summary>
                     <p>{practice.hint}</p>
                   </details>

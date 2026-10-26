@@ -23,12 +23,14 @@ export function SpeechPlayer({
   segmentId,
   seekToken = 0,
   onSegmentChange,
+  defaultRate = '1',
 }: {
   text: string;
   sessionId?: string;
   segmentId?: string;
   seekToken?: number;
   onSegmentChange?: (id: string | null) => void;
+  defaultRate?: '0.75' | '1';
 }) {
   const [manifest, setManifest] = useState<NarrationManifest | null>(null);
   const [loadingManifest, setLoadingManifest] = useState(!!sessionId);
@@ -38,7 +40,8 @@ export function SpeechPlayer({
   const [buffering, setBuffering] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [rate, setRate] = useState('1');
+  const [rate, setRate] = useState<string>(defaultRate);
+  const chosenRate = useRef<string | null>(null);
   const [error, setError] = useState('');
   const audio = useRef<HTMLAudioElement | null>(null);
   const pendingSeek = useRef<number | null>(null);
@@ -160,7 +163,17 @@ export function SpeechPlayer({
         : (manifest?.segments?.find((item) => item.id === segmentId)?.startSeconds ?? 0));
     const next = Math.min(Math.max(0, initial), Math.max(0, length - 0.05));
     element.currentTime = next;
-    element.playbackRate = Number(rate);
+    let savedRate: string | null = null;
+    try {
+      savedRate = sessionStorage.getItem('immersion-narration-rate');
+    } catch {
+      /* Storage is optional. */
+    }
+    const nextRate =
+      chosenRate.current ??
+      (savedRate && ['0.75', '1', '1.25'].includes(savedRate) ? savedRate : rate);
+    element.playbackRate = Number(nextRate);
+    setRate(nextRate);
     pendingSeek.current = null;
     setElapsed(next);
     trackSegment(next);
@@ -280,6 +293,12 @@ export function SpeechPlayer({
             value={rate}
             onChange={(event) => {
               setRate(event.target.value);
+              chosenRate.current = event.target.value;
+              try {
+                sessionStorage.setItem('immersion-narration-rate', event.target.value);
+              } catch {
+                /* Storage is optional. */
+              }
               if (audio.current) audio.current.playbackRate = Number(event.target.value);
             }}
           >

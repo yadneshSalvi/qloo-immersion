@@ -20,8 +20,8 @@ common=(--image="$IMMERSION_IMAGE" --region="$IMMERSION_REGION" --network=immers
   --service-account="$worker_sa" --memory=1Gi --min=0 --max=1 --max-instances=1 --concurrency=1 --timeout=180 \
   --startup-probe=httpGet.path=/health,httpGet.port=8080,timeoutSeconds=5,periodSeconds=10,failureThreshold=24 \
   --invoker-iam-check --no-allow-unauthenticated --command=node --args=--import,tsx,scripts/worker.ts \
-  --set-env-vars=WORKER_AUTH_MODE=cloud-run,DATABASE_SSL_MODE=verify-ca,DATABASE_SSL_CA_FILE=/secrets/sql-ca.pem,DATABASE_POOL_MAX=2,QLOO_BASE_URL=https://hackathon.api.qloo.com,OPENAI_MODEL=gpt-6.1-sol,QLOO_DAILY_CALL_LIMIT=100,QLOO_GUEST_DAILY_CALL_LIMIT=15,MODEL_DAILY_CALL_LIMIT=120,MODEL_GUEST_DAILY_CALL_LIMIT=12,IMMERSION_CULTURAL_BRIDGES_FILE=/secrets/cultural-bridges.json \
-  --set-secrets="$db_secrets,QLOO_API_KEY=immersion-qloo-api-key:$IMMERSION_QLOO_SECRET_VERSION,OPENAI_API_KEY=immersion-openai-api-key:$IMMERSION_OPENAI_SECRET_VERSION,/secrets/cultural-bridges.json=immersion-cultural-bridges:$IMMERSION_BRIDGES_SECRET_VERSION"
+  --set-env-vars=WORKER_AUTH_MODE=cloud-run,DATABASE_SSL_MODE=verify-ca,DATABASE_SSL_CA_FILE=/secrets/sql-ca.pem,DATABASE_POOL_MAX=2,QLOO_BASE_URL=https://hackathon.api.qloo.com,OPENAI_MODEL=gpt-6.1-sol,QLOO_DAILY_CALL_LIMIT=100,QLOO_GUEST_DAILY_CALL_LIMIT=15,MODEL_DAILY_CALL_LIMIT=120,MODEL_GUEST_DAILY_CALL_LIMIT=12,IMMERSION_CULTURAL_BRIDGES_FILE=/cultural/bridges.json \
+  --set-secrets="$db_secrets,QLOO_API_KEY=immersion-qloo-api-key:$IMMERSION_QLOO_SECRET_VERSION,OPENAI_API_KEY=immersion-openai-api-key:$IMMERSION_OPENAI_SECRET_VERSION,/cultural/bridges.json=immersion-cultural-bridges:$IMMERSION_BRIDGES_SECRET_VERSION"
 "$gc" run services add-iam-policy-binding immersion-worker --region="$IMMERSION_REGION" --member="serviceAccount:$invoker_sa" --role=roles/run.invoker --quiet
 worker_url=$("$gc" run services describe immersion-worker --region="$IMMERSION_REGION" --format='value(status.url)')
 ./deploy/gcp/scheduler.sh

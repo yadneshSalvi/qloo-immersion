@@ -394,6 +394,153 @@ function silentWav(seconds: number) {
   return wav;
 }
 
+test('a requested extra-support next session preserves the choice and opens closable authored help', async ({
+  page,
+}) => {
+  await guest(page);
+  const command = async (value: Record<string, unknown>) => {
+    const response = await page.request.post('/api/commands', {
+      headers: { Origin: origin },
+      data: { key: randomUUID(), command: value },
+    });
+    expect(response.ok()).toBeTruthy();
+    return response.json();
+  };
+  const first = corpus[0];
+  const started = await command({
+    type: 'start',
+    versionId: first.source.versionId,
+    support: 'guided',
+  });
+  let current = (
+    await command({
+      type: 'position',
+      sessionId: started.sessionId,
+      expectedVersion: 1,
+      position: 2,
+    })
+  ).session;
+  current = (
+    await command({
+      type: 'begin-practice',
+      sessionId: current.id,
+      expectedVersion: current.version,
+    })
+  ).session;
+  for (const item of first.assessments)
+    current = (
+      await command({
+        type: 'answer',
+        sessionId: current.id,
+        expectedVersion: current.version,
+        assessmentId: item.id,
+        answer: item.answer[0],
+      })
+    ).session;
+  current = (
+    await command({
+      type: 'complete',
+      sessionId: current.id,
+      expectedVersion: current.version,
+      taste: 'more',
+      difficulty: 'hard',
+      consent: true,
+      note: '',
+    })
+  ).session;
+  expect(current.feedback.comprehension).toBe(1);
+  expect(current.feedback.adaptation.support).toBe('extra');
+
+  const next = corpus.find((item) => item.source.id === 'el-ensayo-del-domingo')!;
+  const wav = silentWav(6);
+  await page.route(/\/api\/media\/[a-f0-9-]+\/manifest$/, (route) =>
+    route.fulfill({
+      json: {
+        available: true,
+        audioUrl: new URL(route.request().url()).pathname.replace(/\/manifest$/, ''),
+        durationSeconds: 6,
+        voice: 'Test fixture',
+        model: 'fixture-silence',
+        segments: next.source.segments.map((segment, index) => ({
+          id: segment.id,
+          startSeconds: index * 2,
+          endSeconds: (index + 1) * 2,
+        })),
+      },
+    }),
+  );
+  await page.route(/\/api\/media\/[a-f0-9-]+$/, (route) =>
+    route.fulfill({ status: 200, contentType: 'audio/wav', body: wav }),
+  );
+  await page.goto(`/piece/${next.source.id}`);
+  const supported = page.getByRole('button', { name: /^Start with support/ });
+  await expect(supported).toHaveAttribute('aria-pressed', 'true');
+  await expect(supported).toContainText('Extra support');
+  await supported.click();
+  const opening = page.waitForResponse(
+    (response) =>
+      response.url().endsWith('/api/commands') &&
+      response.request().postDataJSON()?.command?.type === 'start',
+  );
+  await page.getByRole('button', { name: 'Begin this story', exact: true }).click();
+  expect((await opening).request().postDataJSON().command.support).toBe('extra');
+  await expect(page.getByText('Extra support is on', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Hide English', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await expect(page.getByLabel('Narration playback speed')).toHaveValue('0.75');
+  expect(await page.locator('audio').evaluate((node) => (node as HTMLAudioElement).paused)).toBe(
+    true,
+  );
+  await page.getByLabel('Narration playback speed').selectOption('1.25');
+  await page.reload();
+  await expect(page.getByLabel('Narration playback speed')).toHaveValue('1.25');
+  expect(await page.locator('audio').evaluate((node) => (node as HTMLAudioElement).paused)).toBe(
+    true,
+  );
+  await page.getByRole('button', { name: 'Next passage', exact: true }).click();
+  await page.getByRole('button', { name: 'Next passage', exact: true }).click();
+  await page.getByRole('button', { name: 'I’ve read the story. Let’s practice' }).click();
+  const reference = page.locator('.practice-source');
+  await expect(reference).toHaveAttribute('open', '');
+  await reference.locator('summary').click();
+  await expect(reference).not.toHaveAttribute('open', '');
+  await reference.locator('summary').click();
+  const questions = next.assessments.filter((item) => item.kind === 'comprehension');
+  for (const [index, question] of questions.entries()) {
+    const hint = page.locator('.hint-detail');
+    await expect(hint).toHaveAttribute('open', '');
+    await expect(hint).toContainText(question.hint);
+    await hint.locator('summary').click();
+    await expect(hint).not.toHaveAttribute('open', '');
+    const option = question.options.find((item) => item.id === question.answer[0])!;
+    await page.locator('.answer-options button').filter({ hasText: option.text }).click();
+    await expect(hint).not.toHaveAttribute('open', '');
+    await page.getByRole('button', { name: 'Check my answer', exact: true }).click();
+    await page
+      .getByRole('button', {
+        name: index === questions.length - 1 ? 'Try a little Spanish' : 'Next question',
+        exact: true,
+      })
+      .click();
+  }
+  await expect(page.locator('.hint-detail')).toHaveAttribute('open', '');
+  await expect(page.locator('.hint-detail')).toContainText(
+    next.assessments.find((item) => item.kind === 'practice')!.hint,
+  );
+  await page.locator('.hint-detail summary').click();
+  await expect(page.locator('.hint-detail')).not.toHaveAttribute('open', '');
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
+    true,
+  );
+  const accessibility = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+    .analyze();
+  expect(accessibility.violations).toEqual([]);
+});
+
 test('provider-free audio fixture: explicit playback, passage seek, speed, keyboard scrubbing and restored position', async ({
   page,
 }) => {

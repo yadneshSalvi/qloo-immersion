@@ -44,6 +44,7 @@ export function WritingCoach({ sessionId, source }: { sessionId: string; source:
       ? action.run.result
       : null;
   const pending = action.busy || isPending(action.run);
+  const objective = source.objective.trim().replace(/[.!?]+$/, '');
   async function submit() {
     const run = await action.submit('/api/practice/feedback', {
       sessionId,
@@ -70,8 +71,8 @@ export function WritingCoach({ sessionId, source }: { sessionId: string; source:
         Give your opinion and one reason in Spanish.
       </p>
       <p className="fine-print">
-        Try to {source.objective.charAt(0).toLowerCase() + source.objective.slice(1)}. Refer to a
-        detail from the source.
+        Try to {objective.charAt(0).toLowerCase() + objective.slice(1)}. Refer to a detail from the
+        source.
       </p>
       {loadError ? (
         <div className="live-run has-error">

@@ -81,6 +81,7 @@ export default async function Settings() {
           cookie that expires after 30 days. This is a guest learning space, with no cross-device
           sign-in. Clearing the cookie loses access; export or delete your path first.
         </p>
+        <p>Cookie expiry does not delete your stored path. It remains until you delete it.</p>
         <p>
           Only your own guest session can read or change your notes and responses. Cultural search
           and discovery use Qloo when you explicitly request them. Your writing is not sent to Qloo.

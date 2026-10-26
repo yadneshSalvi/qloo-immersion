@@ -10,10 +10,10 @@ The release uses Node 22.22.3, pnpm 10.15.0, Next.js 16.4.3, React 19.3.1, and P
 | --------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Unit/domain tests                 | 58 passed | Corpus consistency, deterministic selection and adaptation, model-output validation, provider boundaries, payload limits, TLS configuration, dispatch and worker authentication |
 | Real PostgreSQL integration tests | 31 passed | Ownership, assignments, idempotency, immutable records, current source permissions, leases, cancellation, stale inputs, usage reservations, cache and narration access          |
-| Playwright browser tests          | 11 passed | Core learning journey, review, recovery, mobile layout, automated accessibility, live-feature states, and audio controls                                                        |
+| Playwright browser tests          | 12 passed | Core learning journey, review, recovery, mobile layout, automated accessibility, live-feature states, and audio controls                                                        |
 | Actual-provider browser rehearsal | Completed | Real Qloo identity resolution and discovery, real source-grounded AI planning/coaching, local playback, fixed practice and durable review                                       |
 
-The final browser suite passed all eleven tests in one complete run. An earlier contrast issue in inactive passage numbers was corrected before that run. A clean production build with `DATABASE_URL` explicitly empty also passed: database queries start at a request-time boundary, and build systems receive no database credential. Hosted CI will be recorded separately.
+The final browser suite passed all twelve tests in one complete run. An earlier contrast issue in inactive passage numbers was corrected before that run. A clean production build with `DATABASE_URL` explicitly empty also passed: database queries start at a request-time boundary, and build systems receive no database credential. The twelve-test run used the compiled production server and finished in 28.3 seconds. Hosted CI is recorded separately below.
 
 Database tests use the separate `immersion_test` database. Browser tests use independent guest cookies against the actual application and PostgreSQL. Tests for provider-dependent UI states explicitly intercept those endpoints with labelled fixtures; they neither establish provider availability nor spend provider credits. The real-provider rehearsal is recorded separately in [live observations](LIVE-OBSERVATIONS.md).
 
@@ -21,7 +21,7 @@ Database tests use the separate `immersion_test` database. Browser tests use ind
 
 - A guest cannot read another guest's sessions, runs, coaching, or narration. Cross-site mutations, invalid content types, oversized input, invalid identifiers, unassigned questions, stale versions, and altered source records are rejected.
 - Source and assessment records are checked before use. Withdrawn hosting/transcript permission blocks source delivery, exercise access, review, and narration, including retries. Withdrawing only model-processing permission blocks new AI processing while preserving access to an already generated narration where hosting and transcript permissions still apply.
-- A hard self-report explicitly requests extra support and holds the next challenge, even after three perfect comprehension sessions. Fixed scores, working bands, and taste are unchanged. Historical adaptation records remain unchanged.
+- A hard self-report explicitly requests extra support and holds the next challenge, even after three perfect comprehension sessions. Fixed scores, working bands, and taste are unchanged. Historical adaptation records remain unchanged. The following lesson opens translations, authored hints and source references, keeps those controls collapsible, and preserves extra support in the preview. Recorded narration initially uses 0.75× only when no saved/user speed is present; it never autoplays.
 - A model can propose only eligible source IDs in the permitted Qloo order, with exact source quotes. Invalid proposals produce an explicitly labelled deterministic fallback. Model-written prose cannot change fixed answers, rights, working bands, or provider evidence.
 - Durable jobs survive interrupted clients. Reloading a pending search resumes its saved run without another creation request. Coaching recovery restores the draft associated with the latest submitted attempt. A lease, cancellation, or profile/source change is checked before side effects and result release.
 - Usage reservations count each bounded provider request. A 24-hour result cache preserves original evidence timestamps and is visibly identified. These are usage limits, not the provider's remaining-credit balance.
@@ -37,6 +37,10 @@ The shipped collection has 15 generated MP3 narrations covering 45 passages and 
 Follow the [README](../README.md) for local PostgreSQL setup, then run `pnpm test`, `pnpm test:db`, `pnpm build`, `pnpm typecheck`, `pnpm lint`, and the browser suite against the running app. The committed GitHub workflow creates isolated application/test databases and verifies the production server without provider credentials.
 
 The corpus contains 36 original fictional pieces and 144 fixed exercises. A2/B1 bands, translations, glosses, and answer keys are provisional and pending independent educator review. There is no certified placement, pronunciation assessment, third-party creator partnership, randomized learner study, or measured retention/fluency improvement. Browser-scoped guest access is not a production account/recovery system. The guest cookie expires after 30 days; stored guest data persists until explicit deletion.
+
+## GitHub CI
+
+The initial run, `40420713119` on `109d44e`, passed the credential-free build, typecheck, lint, 58 unit tests, 31 PostgreSQL tests and migration. Its browser suite found an ambiguous test locator: the production framework adds its own route-announcer alert. The connection-loss assertion was narrowed to its actual message and verified against production Next. A new complete CI run will verify the corrected commit; no failed run is counted as a release pass.
 
 ## Hosted release
 

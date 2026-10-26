@@ -2115,6 +2115,30 @@ details[open] > summary:after {
   margin-top: 20px;
   font-size: 12px;
 }
+.extra-support-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.extra-support-note > svg {
+  flex-shrink: 0;
+  color: var(--lavender);
+  margin-top: 2px;
+}
+.extra-support-note strong {
+  font-size: 15px;
+}
+.extra-support-note p {
+  margin: 3px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.5;
+}
 .practice-source > summary {
   min-height: 50px;
   color: var(--muted);

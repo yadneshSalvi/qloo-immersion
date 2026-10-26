@@ -143,7 +143,7 @@ test('mobile: no overflow, text fallback, network retry and liked-hard adaptatio
   ).toBeVisible();
   await page.route('**/api/commands', (route) => route.abort('failed'));
   await page.getByRole('button', { name: 'Save for review', exact: true }).click();
-  await expect(page.getByRole('alert')).toBeVisible();
+  await expect(page.getByRole('alert').filter({ hasText: 'Connection lost.' })).toBeVisible();
   await page.unroute('**/api/commands');
   await page.reload();
   await expect(page.getByRole('button', { name: 'Retry save' })).toBeVisible();

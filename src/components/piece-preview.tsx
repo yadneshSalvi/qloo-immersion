@@ -90,10 +90,17 @@ export function PiecePreview({
               <button
                 type="button"
                 aria-pressed={support !== 'independent'}
-                onClick={() => setSupport('guided')}
+                onClick={() =>
+                  setSupport(learner?.profile.support === 'extra' ? 'extra' : 'guided')
+                }
               >
                 <span className="radio-dot" />
-                Start with support<span>English translations ready when you need them</span>
+                Start with support
+                <span>
+                  {learner?.profile.support === 'extra'
+                    ? 'Extra support: translations and open practice hints'
+                    : 'English translations ready when you need them'}
+                </span>
               </button>
               <button
                 type="button"
@@ -104,6 +111,12 @@ export function PiecePreview({
                 Try independently<span>Begin in Spanish, with help a click away</span>
               </button>
             </div>
+            {support === 'extra' && (
+              <p className="fine-print">
+                Your request for extra help carries into this story. Hints and the source open
+                during practice; you can close them whenever you prefer.
+              </p>
+            )}
           </fieldset>
           <div className="button-row">
             <Button onClick={start} disabled={action.busy}>
