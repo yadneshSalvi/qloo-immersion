@@ -1,0 +1,290 @@
+import type { Draft } from './corpus';
+
+/** Original AI-assisted CC0 fictional design scenes, with no claim of external review. */
+export const designDrafts: Draft[] = [
+  {
+    id: 'la-lampara-de-papel',
+    title: 'La lámpara de papel',
+    subtitle: 'A paper model helps a corner find its light.',
+    description:
+      'Read a fictional design exercise that compares two paper shades on the same lamp.',
+    cluster: 'design',
+    band: 'A2',
+    format: 'read',
+    country: 'Peru',
+    variety: 'Peruvian setting; general Spanish',
+    scene: 'An imagined craft room in Cusco',
+    palette: 'chair',
+    objective: 'Compare two simple designs and identify a choice based on their effect.',
+    segments: [
+      [
+        'El rincón',
+        'Teresa tiene una lámpara pequeña en su mesa de lectura. La luz es fuerte y le molesta cuando levanta los ojos del libro. En una clase de diseño prepara dos modelos de pantalla con papel. Uno es blanco y ancho; el otro es azul y estrecho. No va a instalar los modelos: solo quiere comparar su forma durante la clase.',
+        'Teresa has a small lamp on her reading table. The light is strong and bothers her when she looks up from her book. In a design class she makes two paper shade models. One is white and wide; the other blue and narrow. She will not install the models: she only wants to compare their shape during the class.',
+      ],
+      [
+        'Los modelos',
+        'La profesora coloca cada modelo frente a una luz de prueba. Teresa observa la sombra en la mesa y hace un dibujo. El modelo azul deja una zona pequeña de luz. El blanco permite iluminar una parte más grande del libro. Teresa escribe las diferencias en una hoja y pide a una compañera que mire los dibujos con ella.',
+        'The teacher places each model in front of a test light. Teresa observes the shadow on the table and makes a drawing. The blue model leaves a small area of light. The white one allows a larger part of the book to be lit. Teresa writes the differences on a sheet and asks a classmate to look at the drawings with her.',
+      ],
+      [
+        'La elección',
+        'Para su proyecto, Teresa elige la forma ancha del modelo blanco. El azul le gusta más como color, pero no da la luz que busca. Guarda ambos modelos para recordar la comparación. Antes de buscar una pantalla para casa, va a medir la mesa. Ahora sabe qué forma necesita y qué pregunta hacer en la tienda.',
+        'For her project, Teresa chooses the wide shape of the white model. She likes blue better as a color, but it does not give the light she wants. She keeps both models to remember the comparison. Before finding a shade for home, she will measure the table. Now she knows what shape she needs and what question to ask at the shop.',
+      ],
+    ],
+    words: [
+      [
+        'pantalla',
+        'lampshade',
+        0,
+        'Here it is a lamp shade, rather than a cinema or phone screen.',
+      ],
+      ['sombra', 'shadow', 1, 'The area where the test model blocks the light.'],
+      ['medir', 'to measure', 2, 'Teresa wants the table’s size before choosing a shade.'],
+    ],
+    questions: [
+      [
+        'What bothers Teresa about her lamp?',
+        ['Its strong light', 'Its blue cable', 'Its loud sound'],
+        0,
+        0,
+        'The light bothers her eyes when she looks up from reading.',
+      ],
+      [
+        'Which model lights more of the book?',
+        ['The narrow blue model', 'Both light exactly the same area', 'The wide white model'],
+        2,
+        1,
+        'The white model lets light reach a larger part of the book.',
+      ],
+      [
+        'What will Teresa do before shopping?',
+        ['Paint the table', 'Measure the table', 'Throw away both models'],
+        1,
+        2,
+        'She plans to measure the table before looking for a lampshade for home.',
+      ],
+    ],
+    practice: [
+      'Complete the comparison: «El azul me gusta ___ como color». (I like blue more as a color.)',
+      ['más', 'mas'],
+      2,
+      '“Más” expresses the comparison. Its standard spelling has an accent; the exercise recognizes both input forms.',
+      'Find the comparison word after “gusta” in passage 3.',
+    ],
+  },
+  {
+    id: 'el-mural-de-las-manos',
+    title: 'El mural de las manos',
+    subtitle: 'A shared wall starts with a small paper plan.',
+    description:
+      'Listen to a fictional mural project where a useful change comes from looking at the route.',
+    cluster: 'design',
+    band: 'A2',
+    format: 'listen',
+    country: 'Mexico',
+    variety: 'Mexican setting; general Spanish',
+    scene: 'An imagined community room in León',
+    palette: 'poster',
+    objective: 'Follow a shared plan and connect a location change to its reason.',
+    segments: [
+      [
+        'La pared',
+        'En el centro vecinal hay una pared blanca junto a la entrada. Cinco personas quieren pintarla con dibujos de manos. Iván trae papel grande para preparar el diseño antes de usar pintura. Cada persona dibuja su mano y escribe dentro una actividad que le gusta. Hay palabras sobre cocinar, leer, bailar y cuidar plantas. Iván dibuja su mano cerca del borde.',
+        'At the neighborhood center there is a white wall beside the entrance. Five people want to paint it with hand drawings. Iván brings large paper to plan the design before using paint. Each person draws their hand and writes an activity they enjoy inside it. There are words about cooking, reading, dancing, and caring for plants. Iván draws his hand near the edge.',
+      ],
+      [
+        'El paso',
+        'Ponen el papel en la pared para mirarlo desde la puerta. Una voluntaria nota que los dibujos de abajo quedan detrás de una mesa. Mueven el diseño un poco hacia arriba y dejan libre el espacio del interruptor. Después miran la pared desde el pasillo. Ahora pueden ver todas las manos sin mover los muebles ni acercarse mucho.',
+        'They put the paper on the wall to look at it from the door. A volunteer notices that the lower drawings are behind a table. They move the design slightly upward and leave the switch area clear. Then they look at the wall from the hallway. Now they can see every hand without moving furniture or coming very close.',
+      ],
+      [
+        'El sábado',
+        'El sábado llegan con pintura y ropa vieja. Primero marcan las formas con lápiz y después añaden los colores. Nadie pinta sobre el interruptor. Cuando terminan, guardan el plan de papel en un armario del centro. Quieren usarlo para contar la historia del mural durante la fiesta de apertura de la nueva sala.',
+        'On Saturday they arrive with paint and old clothes. First they mark the shapes in pencil and then add colors. Nobody paints over the switch. When they finish, they keep the paper plan in a cupboard at the center. They want to use it to tell the mural’s story during the opening party for the new room.',
+      ],
+    ],
+    words: [
+      ['borde', 'edge', 0, 'The outer edge of the large paper plan.'],
+      ['interruptor', 'light switch', 1, 'They keep the switch accessible and free of the design.'],
+      ['armario', 'cupboard', 2, 'Where the center stores the original paper plan.'],
+    ],
+    questions: [
+      [
+        'What do they do before painting the wall?',
+        ['Buy new furniture', 'Make a large paper plan', 'Cover the light switch'],
+        1,
+        0,
+        'They draw hands on large paper to plan the mural before using paint.',
+      ],
+      [
+        'Why do they move the design upward?',
+        ['The paint is too dark', 'The hallway is closed', 'A table hides the lower drawings'],
+        2,
+        1,
+        'The volunteer notices that the table blocks the bottom part of the plan.',
+      ],
+      [
+        'Why do they keep the paper plan?',
+        [
+          'To tell the mural’s story at the opening',
+          'To paint over the switch later',
+          'To hide the finished mural',
+        ],
+        0,
+        2,
+        'They save it as part of the story they will share at the opening party.',
+      ],
+    ],
+    practice: [
+      'Complete the direction: «Mueven el diseño hacia ___». (They move the design upward.)',
+      ['arriba'],
+      1,
+      '“Hacia arriba” means upward; the change makes the lower drawings visible above the table.',
+      'Find the direction after “hacia” in passage 2.',
+    ],
+  },
+  {
+    id: 'el-banco-que-se-movia',
+    title: 'El banco que se movía',
+    subtitle: 'A prototype finds a better question than its first drawing.',
+    description:
+      'Listen to a fictional furniture workshop that treats observations as a reason to revise.',
+    cluster: 'design',
+    band: 'B1',
+    format: 'listen',
+    country: 'Spain',
+    variety: 'Spanish setting; general Spanish',
+    scene: 'An imagined furniture workshop in Logroño',
+    palette: 'chair',
+    objective: 'Explain why a first design was revised and how uncertainty remained visible.',
+    segments: [
+      [
+        'El encargo',
+        'A Irene le pidieron un banco para la entrada de una sala de ensayo. Imaginó una pieza larga y pesada que llenara toda la pared. Antes de fabricar nada, marcó su tamaño en el suelo con cinta y colocó varias sillas dentro del contorno. Quería observar cómo entrarían las personas con instrumentos y abrigos. Su dibujo parecía ordenado, pero todavía no sabía si la propuesta dejaba espacio suficiente para circular.',
+        'Irene was asked to design a bench for the entrance to a rehearsal room. She imagined a long, heavy piece filling the whole wall. Before making anything, she marked its size on the floor with tape and placed several chairs inside the outline. She wanted to observe people arriving with instruments and coats. Her drawing looked orderly, but she did not yet know whether it left enough room to move around.',
+      ],
+      [
+        'La primera prueba',
+        'Durante una tarde, dos músicos tuvieron que pasar de lado para no golpear las sillas con sus fundas. Otra persona buscó un asiento cerca de la puerta para esperar solo unos minutos. Irene anotó esas situaciones y propuso dos bancos cortos en lugar de uno largo. Así podrían separarse cuando hubiera mucho movimiento. Preparó nuevos contornos con cinta y repitió el recorrido, esta vez con espacio libre en el centro de la pared.',
+        'One afternoon, two musicians had to pass sideways to avoid hitting the chairs with their instrument cases. Another person sought a seat near the door for a wait of just a few minutes. Irene noted those situations and proposed two short benches instead of one long one. They could then be separated when the space was busy. She made new tape outlines and repeated the route with a gap in the middle of the wall.',
+      ],
+      [
+        'La propuesta revisada',
+        'El responsable de la sala prefirió la segunda distribución porque permitía cambiar la entrada según la actividad. Irene dejó claro que los contornos y las sillas solo probaban el espacio: aún faltaba revisar los materiales y la estabilidad del mueble real. Entregó los dibujos con una lista de comprobaciones pendientes. La observación no había producido un objeto terminado, pero sí una propuesta mejor ajustada a las personas que iban a utilizarlo.',
+        'The room manager preferred the second layout because it allowed the entrance to change with the activity. Irene made clear that the outlines and chairs tested only the space: the materials and stability of the actual furniture still needed review. She delivered the drawings with a list of pending checks. Observation had not produced a finished object, but it had produced a proposal better suited to the people who would use it.',
+      ],
+    ],
+    words: [
+      ['cinta', 'tape', 0, 'Irene marks a proposed furniture outline with tape on the floor.'],
+      ['fundas', 'cases / covers', 1, 'The protective cases carried with the instruments.'],
+      ['distribución', 'layout', 2, 'The arrangement of furniture and free space in the entrance.'],
+    ],
+    questions: [
+      [
+        'How does Irene first represent the bench?',
+        ['With floor tape and chairs', 'With a finished wooden bench', 'With a poster outside'],
+        0,
+        0,
+        'The temporary outline and chairs let her test circulation before making the bench.',
+      ],
+      [
+        'What change does she propose after observing arrivals?',
+        ['A longer single bench', 'Two shorter benches', 'Removing the door'],
+        1,
+        1,
+        'Two shorter benches can be separated to leave more space for movement.',
+      ],
+      [
+        'What has the temporary setup not yet tested?',
+        [
+          'The location of the entrance',
+          'Whether musicians bring cases',
+          'Materials and stability of the real furniture',
+        ],
+        2,
+        2,
+        'Irene states that material and stability checks remain before producing the actual furniture.',
+      ],
+    ],
+    practice: [
+      'Complete the replacement: «Dos bancos cortos en lugar ___ uno largo». (Two short benches instead of one long one.)',
+      ['de'],
+      1,
+      '“En lugar de” introduces the replaced option; here one long bench is replaced by two short benches.',
+      'Find the preposition after “lugar” in passage 2.',
+    ],
+  },
+  {
+    id: 'la-tipografia-de-la-feria',
+    title: 'La tipografía de la feria',
+    subtitle: 'A letter style has to work beyond the studio wall.',
+    description:
+      'Read an original fictional account of testing a fair’s signs at their actual viewing distance.',
+    cluster: 'design',
+    band: 'B1',
+    format: 'read',
+    country: 'Uruguay',
+    variety: 'Uruguayan setting; general Spanish',
+    scene: 'An imagined makers’ fair in Paysandú',
+    palette: 'poster',
+    objective: 'Distinguish aesthetic preference from evidence about a sign’s use.',
+    segments: [
+      [
+        'En la pantalla',
+        'Gabriel preparaba los letreros de una feria de objetos hechos a mano. En su pantalla, una letra muy estrecha parecía elegante y dejaba mucho espacio para los nombres de los puestos. Imprimió una muestra pequeña y la colgó en el estudio. Sus compañeros aprobaron el estilo, pero una organizadora le recordó que las señales estarían por encima de las mesas y que los visitantes tendrían que leerlas mientras caminaban entre otras personas.',
+        'Gabriel was preparing signs for a handmade-object fair. On his screen, very narrow lettering looked elegant and left plenty of room for stall names. He printed a small sample and hung it in the studio. His colleagues approved the style, but an organizer reminded him that signs would be above tables and visitors would need to read them while walking among other people.',
+      ],
+      [
+        'En el lugar',
+        'Llevaron dos versiones al recinto vacío: una con la letra original y otra con trazos más abiertos. Las colocaron a la misma altura y pidieron a varias personas que localizaran un puesto desde la entrada. Con la segunda versión hubo menos preguntas sobre los nombres. Gabriel no tomó aquello como una votación sobre belleza; le interesaba si la señal ayudaba a encontrar un destino desde la distancia prevista.',
+        'They took two versions to the empty venue: one with the original letters and another with more open strokes. They placed them at the same height and asked several people to locate a stall from the entrance. The second version prompted fewer questions about names. Gabriel did not treat this as a vote on beauty; he wanted to know whether the sign helped people find a destination from the intended distance.',
+      ],
+      [
+        'El sistema final',
+        'Eligió la segunda letra para los nombres y reservó la primera para unos folletos que se leerían de cerca. También dejó espacio entre las palabras y comprobó los números de los puestos. El día de la feria siguió observando las señales, porque el recinto lleno podía presentar dificultades que no habían aparecido en la prueba. Para el próximo evento guardó las medidas y los comentarios, junto con una nota sobre las condiciones de cada observación.',
+        'He chose the second lettering style for names and kept the first for leaflets people would read up close. He also added space between words and checked stall numbers. On the day of the fair he continued observing signs because the crowded venue might pose difficulties absent from the trial. For the next event he kept measurements and comments with a note on the conditions of each observation.',
+      ],
+    ],
+    words: [
+      ['letreros', 'signs', 0, 'The signs naming the stalls at the fictional fair.'],
+      ['trazos', 'strokes', 1, 'The marks that form the letters.'],
+      ['folletos', 'leaflets', 2, 'Printed items read from a closer distance than overhead signs.'],
+    ],
+    questions: [
+      [
+        'What difference does the organizer point out?',
+        [
+          'The fair has no tables',
+          'The signs will be read while people walk',
+          'The studio has no printer',
+        ],
+        1,
+        0,
+        'The actual setting involves moving visitors reading signs above tables.',
+      ],
+      [
+        'What do they keep equal in the comparison?',
+        ['Every person’s walking speed', 'The number of stalls visited', 'The signs’ height'],
+        2,
+        1,
+        'Both versions are placed at the same height for the location task.',
+      ],
+      [
+        'Where does Gabriel use the original narrow lettering?',
+        ['In leaflets read up close', 'For every overhead sign', 'Nowhere at all'],
+        0,
+        2,
+        'He reserves the original style for leaflets, which are read at close range.',
+      ],
+    ],
+    practice: [
+      'Complete the distance phrase: «Estos folletos se leen de ___». (These leaflets are read up close.)',
+      ['cerca'],
+      2,
+      '“De cerca” means from a short distance, unlike the signs viewed from the entrance.',
+      'Find the expression describing how the leaflets are read in passage 3.',
+    ],
+  },
+];

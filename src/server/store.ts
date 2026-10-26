@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto';
 import type { PoolClient } from 'pg';
 import { database, transaction } from './db';
+import { sourceIntegrityHash } from './integrity';
 import {
   commandSchema,
   onboardingSchema,
@@ -42,6 +43,7 @@ type ContentRow = {
   can_transcript: boolean;
   can_adapt: boolean;
   can_model: boolean;
+  source_integrity_hash: string | null;
 };
 type SessionRow = {
   id: string;
@@ -91,7 +93,9 @@ export function rightsFor(row: ContentRow): RightsRecord {
 function eligible(row: ContentRow) {
   const r = rightsFor(row);
   return (
-    canUseSource(r, row.id, 'host', Date.now()) && canUseSource(r, row.id, 'transcript', Date.now())
+    canUseSource(r, row.id, 'host', Date.now()) &&
+    canUseSource(r, row.id, 'transcript', Date.now()) &&
+    row.source_integrity_hash === sourceIntegrityHash(row.source)
   );
 }
 export async function getSource(id: string, client: Queryable = database()): Promise<Source> {
@@ -811,6 +815,7 @@ export async function executeCommand(
                 assessedItems: Number(comprehensionRows.total),
                 consecutiveStrongSessions: consecutive,
                 support: session.support,
+                difficulty: command.difficulty,
               })
             : null;
           const feedback: SessionView['feedback'] = {
@@ -855,7 +860,7 @@ export async function executeCommand(
               selfReportUsedAsScore: false,
               adaptationConsent: command.consent,
               adaptation,
-              policy: 'separate-taste-comprehension-1',
+              policy: 'separate-taste-comprehension-support-2',
               readingBand: profile.readingBand,
               listeningBand: profile.listeningBand,
               changeProficiencyBand: false,

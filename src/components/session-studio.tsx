@@ -16,10 +16,12 @@ import {
   CircleHelp,
   Leaf,
   RefreshCw,
+  Volume2,
   X,
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Artwork } from './artwork';
+import { WritingCoach } from './writing-coach';
 import { SpeechPlayer } from './speech-player';
 import { useCommand } from './client-api';
 import type { SessionView, GlossaryTerm } from '@/domain/types';
@@ -61,6 +63,8 @@ function HighlightedText({
 }
 export function SessionStudio({ initialSession }: { initialSession: SessionView }) {
   const [session, setSession] = useState(initialSession);
+  const [audioSegmentId, setAudioSegmentId] = useState<string | null>(null);
+  const [audioSeekToken, setAudioSeekToken] = useState(0);
   const [translation, setTranslation] = useState(initialSession.support !== 'independent');
   const [selectedWord, setSelectedWord] = useState(initialSession.piece.glossary[0]?.id ?? '');
   const [questionIndex, setQuestionIndex] = useState(
@@ -121,6 +125,7 @@ export function SessionStudio({ initialSession }: { initialSession: SessionView 
         position: index,
       })
     ) {
+      setAudioSeekToken((value) => value + 1);
       setSelectedWord(
         source.glossary.find((w) => w.segmentId === source.segments[index].id)?.id ??
           source.glossary[0].id,
@@ -284,18 +289,29 @@ export function SessionStudio({ initialSession }: { initialSession: SessionView 
                 {translation ? 'Hide English' : 'Show English'}
               </Button>
             </div>
-            <SpeechPlayer key={segment.id} text={segment.text} />
+            <SpeechPlayer
+              text={segment.text}
+              sessionId={session.id}
+              segmentId={segment.id}
+              seekToken={audioSeekToken}
+              onSegmentChange={setAudioSegmentId}
+            />
             <div className="passage-tabs" role="group" aria-label="Source passages">
               {source.segments.map((s, i) => (
                 <button
                   type="button"
                   key={s.id}
                   aria-pressed={session.position === i}
+                  aria-current={audioSegmentId === s.id ? 'true' : undefined}
+                  data-audio-current={audioSegmentId === s.id || undefined}
                   onClick={() => position(i)}
                   disabled={action.busy}
                 >
                   <span>{String(i + 1).padStart(2, '0')}</span>
                   <span lang="es">{s.label}</span>
+                  {audioSegmentId === s.id && (
+                    <Volume2 size={13} aria-label="Current audio passage" />
+                  )}
                 </button>
               ))}
             </div>
@@ -536,8 +552,8 @@ export function SessionStudio({ initialSession }: { initialSession: SessionView 
                     placeholder="Me gustaría… porque…"
                   />
                   <p className="fine-print">
-                    Saved with this session when you complete it. AI writing feedback is unavailable
-                    in this edition; no grammar or fluency score will be invented.
+                    Saved with this session when you complete it. Optional AI writing feedback is a
+                    separate activity, with its own processing consent.
                   </p>
                 </div>
                 <label className="checkbox-label">
@@ -714,6 +730,12 @@ export function SessionStudio({ initialSession }: { initialSession: SessionView 
           </article>
         </div>
       )}
+      {session.state !== 'active' &&
+        ((allAnswered && practiceResult) || session.state === 'completed') && (
+          <div className="container coaching-container">
+            <WritingCoach sessionId={session.id} source={source} />
+          </div>
+        )}
       <Dialog.Root open={glossaryOpen} onOpenChange={setGlossaryOpen}>
         <Dialog.Portal>
           <Dialog.Overlay className="dialog-overlay" />

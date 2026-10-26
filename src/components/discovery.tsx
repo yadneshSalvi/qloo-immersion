@@ -1,5 +1,7 @@
 'use client';
 import { useState } from 'react';
+import type { DiscoveryResult, LiveOverview } from '@/domain/live';
+import { DiscoveryConnection, DiscoveryComparison, LiveStudyPlan } from './live-discovery';
 import Link from 'next/link';
 import {
   ArrowRight,
@@ -25,19 +27,30 @@ import {
   type Learner,
   type DiscoveryCard,
 } from '@/domain/types';
-export function Discovery({
-  catalog,
-  learner,
-  routes,
-  bookmarks: initialBookmarks,
-  resume,
-}: {
+interface DiscoveryProps {
   catalog: Piece[];
   learner: Learner | null;
   routes: DiscoveryCard[];
   bookmarks: string[];
   resume: { id: string; title: string; state: string } | null;
-}) {
+  liveOverview?: LiveOverview | null;
+}
+export function Discovery(props: DiscoveryProps) {
+  return (
+    <DiscoveryConnection overview={props.liveOverview} signedIn={!!props.learner}>
+      {(result) => <DiscoveryContent {...props} liveResult={result} />}
+    </DiscoveryConnection>
+  );
+}
+function DiscoveryContent({
+  catalog,
+  learner,
+  routes: editorialRoutes,
+  liveResult,
+  bookmarks: initialBookmarks,
+  resume,
+}: DiscoveryProps & { liveResult: DiscoveryResult | null }) {
+  const routes = liveResult?.recommendations.length ? liveResult.recommendations : editorialRoutes;
   const [cluster, setCluster] = useState<Cluster | 'all'>('all');
   const [format, setFormat] = useState('all');
   const [band, setBand] = useState('all');
@@ -164,6 +177,40 @@ export function Discovery({
                   'An original sample selected by the IMMERSION collection order. Create your path to choose categories and a starting band.'}
               </p>
             </details>
+            {liveResult?.recommendations[0] && (
+              <div className="cultural-bridge">
+                <span className="eyebrow">The connection, in three steps</span>
+                <ol>
+                  <li>
+                    <span>Qloo film connection</span>
+                    <strong>{liveResult.recommendations[0].evidence.anchorName}</strong>
+                  </li>
+                  <li>
+                    <span>IMMERSION editorial theme</span>
+                    <strong>{liveResult.recommendations[0].evidence.theme}</strong>
+                  </li>
+                  <li>
+                    <span>Original Spanish story</span>
+                    <strong lang="es">{featured.title}</strong>
+                  </li>
+                </ol>
+                <p>{liveResult.recommendations[0].evidence.explanation}</p>
+                <a
+                  className="quiet-link"
+                  href={liveResult.recommendations[0].evidence.sourceUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Film reference <ArrowUpRight size={13} />
+                </a>
+              </div>
+            )}
+            {liveResult?.recommendations[0] && (
+              <LiveStudyPlan
+                evidence={liveResult.recommendations[0].evidence}
+                mode={liveResult.planning.mode}
+              />
+            )}
             <span className="feature-credit">Original sample · Educator review pending</span>
             {action.error && (
               <p role="alert" className="error-message">
@@ -183,13 +230,20 @@ export function Discovery({
       <div className="discovery-status">
         <span>
           <span className="status-dot" />
-          Editorial sample discovery
+          {liveResult
+            ? `${liveResult.mode === 'live' ? 'Live' : 'Cached'} Qloo-informed discovery`
+            : 'Editorial collection discovery'}
         </span>
-        <p>Selected from your categories and working bands. Live Qloo discovery isn’t connected.</p>
+        <p>
+          {liveResult
+            ? 'Cultural affinity shapes this order. Source eligibility and working bands are checked separately.'
+            : 'Selected from your categories and working bands. Confirm favorites to request cultural discovery.'}
+        </p>
         <Link href="/evidence">
           View evidence <ArrowUpRight size={14} />
         </Link>
       </div>
+      {liveResult && <DiscoveryComparison result={liveResult} />}
       {routes.length > 1 && (
         <section className="other-routes">
           <div className="section-heading">

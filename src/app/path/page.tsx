@@ -1,13 +1,14 @@
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, Check, BookOpen, Bookmark, Feather, Route } from 'lucide-react';
 import { requireLearner } from '@/server/auth';
+import { getLiveOverview } from '@/server/live-store';
 import { getPath } from '@/server/store';
 import { PieceCard } from '@/components/piece-card';
 import { clusterLabels } from '@/domain/types';
 export const metadata = { title: 'Your learning path' };
 export default async function Path() {
   const learner = await requireLearner();
-  const path = await getPath(learner.id);
+  const [path, live] = await Promise.all([getPath(learner.id), getLiveOverview(learner.id)]);
   const complete = path.sessions.filter((s) => s.state === 'completed');
   return (
     <div className="container path-page">
@@ -115,12 +116,30 @@ export default async function Path() {
               </span>
             ))}
           </div>
+          {live.interests.length > 0 && (
+            <>
+              <span className="eyebrow small-heading">Your confirmed cultural interests</span>
+              <div className="chip-row">
+                {live.interests.map((interest) => (
+                  <span className="chip" key={interest.entityId}>
+                    <Check size={13} />
+                    {interest.name}
+                  </span>
+                ))}
+              </div>
+              <p className="fine-print">
+                Exact identities you confirmed. Cultural affinity is separate from your working
+                language bands.
+              </p>
+            </>
+          )}
           {learner.profile.references.length > 0 && (
             <>
-              <span className="eyebrow small-heading">Your expressed favorites</span>
+              <span className="eyebrow small-heading">Earlier expressed favorites</span>
               <p>{learner.profile.references.join(' · ')}</p>
               <span className="fine-print">
-                Unresolved references. No live Qloo match is asserted.
+                These earlier text references remain unresolved. Confirm exact identities in Your
+                interests to use them for cultural discovery.
               </span>
             </>
           )}

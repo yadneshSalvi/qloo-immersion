@@ -156,7 +156,8 @@ export function PiecePreview({
           {piece.format === 'listen' && (
             <p>
               <Headphones size={15} />
-              Optional browser-generated voice; the text is always available
+              Synthetic narration where available, with an optional browser voice; the text is
+              always available
             </p>
           )}
           <Link className="quiet-link" href="/evidence">

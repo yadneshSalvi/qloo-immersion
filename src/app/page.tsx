@@ -38,7 +38,7 @@ export default async function Home() {
         <div className="hero-editorial">
           <div className="editorial-tag">
             <span>THE ORIGINAL COLLECTION</span>
-            <span>VOL. 01 / 12 PIECES</span>
+            <span>VOL. 01 / {catalog.length} PIECES</span>
           </div>
           <div className="hero-art">
             <Artwork cluster="food" palette="market" />
@@ -93,7 +93,7 @@ export default async function Home() {
             <h2>There’s a story in everything.</h2>
           </div>
           <Link className="quiet-link" href="/discover">
-            All 12 pieces <ArrowRight size={17} />
+            All {catalog.length} pieces <ArrowRight size={17} />
           </Link>
         </div>
         <div className="piece-grid">
@@ -124,12 +124,12 @@ export default async function Home() {
       <section className="edition-note container">
         <div>
           <Headphones size={18} />
-          <span>Reading, optional browser voices, and useful practice.</span>
+          <span>Reading, synthetic narration where available, and useful practice.</span>
         </div>
         <p>
           This edition contains original fictional samples, written with AI assistance. Educator
-          review is pending. Live Qloo discovery and AI feedback are not enabled.{' '}
-          <Link href="/evidence">See what’s working ↗</Link>
+          review is pending. Confirm favorites to request cultural discovery; optional AI writing
+          feedback requires your consent. <Link href="/evidence">See what’s working ↗</Link>
         </p>
       </section>
     </>

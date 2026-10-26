@@ -2,91 +2,90 @@
 
 **Follow your curiosity. Find your Spanish.**
 
-IMMERSION is a cultural reading and listening studio for English-speaking adults learning Spanish around A2–B1. The interface combines an editorial collection, a quiet reading canvas, source-specific practice, and a personal word notebook.
+IMMERSION is a cultural reading and listening studio for English-speaking adults (18+) learning Spanish around **A2–B1 working bands**. Confirm a favorite, follow a cultural connection into an original story, practice its language, and keep useful expressions in a personal word notebook.
 
-This repository contains a working **authored sample edition**. Its complete local journey uses real PostgreSQL persistence. It does not make live Qloo or model requests, and adding a provider key alone does not enable those features.
+The collection contains **36 original fictional Spanish stories written with AI assistance** across music, cinema, literature, food, design, and everyday places: **18 reading pieces and 18 reading/listening pieces**. Educator review is pending. The bands are starting recommendations, not certified CEFR assessments.
+
+Fifteen listening pieces include approved prebuilt synthetic Spanish MP3 narration with passage timing. Three use the clearly labeled browser-voice/text fallback: `una-cancion-dos-versiones`, `el-puesto-que-cambio-la-hora`, and `el-banco-que-se-movia`. Playback is explicit, with speed controls, keyboard scrubbing, passage seeking, and a browser-local saved position. See the [narration notes](assets/audio/README.md).
+
+## Follow a cultural connection
+
+1. **Identify a favorite.** Search for an artist, film, book, person, brand, or place. Choose the exact returned Qloo identity; ambiguous names are never silently confirmed. Keep up to three favorites.
+2. **Find a connection.** Qloo ranks a restricted shortlist of reviewed film references against those favorites. IMMERSION connects film themes to its own original Spanish stories. Source permissions, reading/listening band, time, novelty, and explicit support preferences determine eligible story options separately.
+3. **Receive a study invitation.** A bounded OpenAI `ToolLoopAgent` first inspects the eligible original corpus, then proposes structured study guidance in at most two model steps. Code validates selected sources, protected route order, and exact source quotations. If AI planning fails, the recorded cultural order and deterministic selection remain clearly labeled.
+4. **Explore and practice.** Read three passages, reveal English, open contextual word meanings, and optionally listen. Each story has three fixed source questions and one expression exercise: **144 assigned exercises**. Answer keys remain server-side. Comprehension results and expression practice are separate.
+5. **Write an opinion, optionally.** After the fixed exercises, consent separately to send a short typed opinion and story context for AI writing feedback. It returns one useful success, at most two corrections tied to exact learner spans, verified source quotations, a labeled generated example, and a retry invitation. A session permits three feedback requests. This activity does not alter comprehension results or produce a fluency score.
+6. **Return to what mattered.** Give separate taste and difficulty feedback, choose whether to adapt the next route, and revisit saved words. Asking for more support adds it and holds the challenge even after strong question results; it does not change those scores, your working bands, or your taste. Successful recall uses an explicit 1/3/7/14-day schedule; that policy is not evidence of optimal retention.
+
+The discovery comparison uses the same eligible film-reference pool and learner constraints for the editorial baseline and Qloo-informed order. Shared film references use the same selected story in both lists. A changed order is an integration observation, **not measured preference, learning gain, retention, or causal lift**. These stories are not Qloo-indexed lessons, film excerpts, or film adaptations; cultural connections imply no creator affiliation, endorsement, or media rights.
+
+Browse the editorial collection and continue saved lessons when a provider is unavailable. Provider evidence is labeled **live** or **cached**, with its original timestamp. Actual provider observations are recorded separately in [LIVE-OBSERVATIONS](docs/LIVE-OBSERVATIONS.md).
 
 ## Run locally
 
-Requires Node **22.22.3**, pnpm **10.15.0**, and PostgreSQL (tested against the task’s local PostgreSQL service). A Docker Compose option is included for a new local database.
+Requires Node **22.22.3**, pnpm **10.15.0**, and PostgreSQL. The included Compose service uses PostgreSQL 17, database/user `immersion`, and loopback port **55432**.
 
 ```sh
 pnpm install --frozen-lockfile
 cp .env.example .env.local
 ```
 
-Set `POSTGRES_PASSWORD` and the password in `DATABASE_URL` to the same local development value. Keep `.env.local` private. If you already have PostgreSQL, set `DATABASE_URL` to its **immersion** database and skip the Docker command. The database must exist before migration.
+Set `POSTGRES_PASSWORD` and the password in `DATABASE_URL` to the same local value. Keep `APP_ORIGIN=http://127.0.0.1:3103` for the default web server. If an existing PostgreSQL service already provides the database, configure its URL and skip Compose; the database must exist before migration.
 
 ```sh
-# For a new database; skip if an existing service already occupies port 55432.
+# Optional: start the included local database, then wait for its health check.
 docker compose --env-file .env.local up -d db
 
-# Wait for PostgreSQL to be healthy, then initialize tables and the sample collection.
 pnpm db:migrate
 pnpm dev
 ```
 
-Open [http://127.0.0.1:3103](http://127.0.0.1:3103). Keep `APP_ORIGIN` equal to the browser origin; mutations require a same-origin JSON request. Development and production startup both bind to `127.0.0.1:3103` by default.
+Open [http://127.0.0.1:3103](http://127.0.0.1:3103). Onboarding continues to **Your interests**; **Browse the collection** works without provider credentials. With live capabilities disabled, the deterministic learning journey remains available.
 
-For a local production build:
+For a local production build, stop the development server before using the same port:
 
 ```sh
 pnpm build
 pnpm start
 ```
 
-Stop the development server before starting the production server on the same port. The app is not a static export: it requires a Node runtime, a persistent PostgreSQL connection, and migrations. No public deployment is asserted by this repository.
+This is a Node application with persistent PostgreSQL state, not a static export. Migrations reject changed source or assessment data under published identities. The schema currently allows one content row per unique slug: an authored revision requires distinct source ID/slug, version identity, and assessment IDs. Automated version promotion and simultaneous editions of one slug are not implemented.
 
-## Try the complete journey
+## Configure optional live processing
 
-1. Choose **Build my path**, confirm that you are 18 or older, choose reading/listening starting bands, and select at least one cultural category. Named favorites are optional, expressed references; they are not resolved Qloo entities.
-2. With A2 and **Food culture**, open **Una mesa en el mercado**. Start with support or begin independently.
-3. Read its three passages, open a contextual word meaning, and save a word. English translation and an optional browser-generated Spanish voice are available. If the browser has no Spanish voice, the text remains usable.
-4. Answer three source questions and try a short missing-word exercise. Answer keys stay on the server. Corrections point back to the assigned passage. The three comprehension answers are scored once; the separate expression exercise permits up to three attempts.
-5. Give separate taste and difficulty feedback. An optional Spanish reflection is saved when the session is completed and is explicitly unscored. You choose whether to use feedback to adapt the path.
-6. Open **My words**, recall the saved expression, and see its real next review time. Review again after its due date. Reloading preserves your session, responses, saved words, and schedule.
-7. Visit **My path** and **Sample edition** to inspect actual activity and adaptation evidence. Preferences and data controls are in **Settings**; export or delete only your own guest path.
+The **web process** needs database access, the appropriate database CA for deployed TLS, `APP_ORIGIN`, and capability/dispatch configuration. The **worker process** needs database access plus provider credentials and the private reviewed film-theme bridge. Keep provider keys and private bridge configuration out of the web environment, browser bundles, build contexts, logs, and repository.
 
-A positive cultural preference with low objective comprehension retains the thread and adds support. A negative preference with good comprehension keeps the challenge and changes culture. With this small corpus, preserving a thread may mean a clearly explained supported revisit; it is not presented as a new unseen recommendation. No single session automatically changes the self-selected reading/listening bands. Self-reported difficulty is recorded separately from objective answers.
+| Process       | Configuration                                                                                                                                                                            |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Web           | `DATABASE_URL`, `APP_ORIGIN`; `DATABASE_SSL_CA_FILE` and `DATABASE_SSL_MODE` for deployed TLS; `LIVE_QLOO_ENABLED=1` / `LIVE_COACHING_ENABLED=1` only for configured worker capabilities |
+| Worker        | `DATABASE_URL`, database TLS settings, `QLOO_API_KEY`, `OPENAI_API_KEY`, and `IMMERSION_CULTURAL_BRIDGES_FILE` or `IMMERSION_CULTURAL_BRIDGES_JSON`                                      |
+| Provider pins | Qloo uses `https://hackathon.api.qloo.com`; the accepted OpenAI model is `gpt-6.1-sol` (`OPENAI_MODEL` may explicitly select that same value)                                            |
+| Budgets       | `QLOO_DAILY_CALL_LIMIT` / `QLOO_GUEST_DAILY_CALL_LIMIT` default to 100 / 15; `MODEL_DAILY_CALL_LIMIT` / `MODEL_GUEST_DAILY_CALL_LIMIT` default to 120 / 12                               |
 
-## What is implemented
+Limits count reserved provider attempts over a rolling day, not tokens, invoice totals, or remaining account credit. A run permits at most one Qloo request and two model requests. Atomic reservations also enforce a per-credential minute limit. Valid Qloo cache entries and saved checkpoints avoid repeated requests.
 
-- Twelve original fictional Spanish pieces: music, cinema, literature, food, design, and everyday places, each with an intended A2 and B1 band. Six reading-first and six reading/listening pieces, with three passages and three vocabulary items each.
-- Forty-eight bounded exercises: three source questions and one short expression exercise per piece. Exact source version, session, and objective assignments are validated by services and composite PostgreSQL foreign keys.
-- Three editorial discovery routes, category/search/format/band/duration filters, source previews, saved pieces, optional translations, browser speech, desktop contextual meanings, and a mobile glossary sheet with keyboard focus return.
-- Isolated 30-day guest cookies whose bearer values are stored only as hashes in PostgreSQL. Owner-scoped reads and writes, strict typed commands, same-origin checks, transactional owner locks, optimistic versions, and idempotency keys.
-- Actual source permission checks on source delivery, practice, vocabulary, exports, and keyed replays. Withdrawal blocks source details while keeping activity metadata. A keyed session retry returns the current session instead of reverting the UI to an old snapshot.
-- First word recall is due immediately after saving. Successful recall schedules the next interval at **1 / 3 / 7 / 14 days**; failed recall resets to one day. The server enforces due times. This explicit policy is not a claim of optimal retention.
-- Browser-local pending-save recovery. If a request is interrupted, the same keyed request can be retried after reloading. A different action cannot silently replace an unresolved pending save. No audio is recorded or queued.
-- Personal JSON export and guest deletion with database cascades. Exports omit credentials, future answer keys, source passages, and text details associated with unavailable sources.
+Acquire film identifiers through authorized Qloo catalog verification, review ambiguous identities and each editorial theme relationship, and import a private strict array of **3–10 film bridges**. Each entry requires `key`, canonical `entityId`, `entityType: "movie"`, `name`, `cluster`, `theme`, `explanation`, an HTTPS `sourceUrl` without query parameters or embedded credentials, and ISO `verifiedAt`. Keys and identities must be unique. The [configuration validator](src/server/live-config.ts) defines the exact contract. No canonical mapping is bundled as fictional demonstration data; missing identities cannot be invented.
 
-## Architecture and boundaries
+Inject worker secrets into its own process environment or secret mounts. `pnpm worker` runs [`scripts/worker.ts`](scripts/worker.ts) and reads `.env.local` for shared local settings; do not put provider credentials in that file when the web process also reads it. The local worker polls durable PostgreSQL jobs. Optional private dispatch uses `WORKER_URL` and a separate `WORKER_DISPATCH_TOKEN` of at least 32 characters. Cloud Run uses private IAM/OIDC dispatch through Cloud Tasks; follow the [deployment guide](deploy/gcp/README.md).
 
-This initial implementation uses a single Next.js App Router application with focused modules, rather than an unneeded distributed agent runtime for its deterministic sample path.
+Starting a configured worker allows it to process explicitly queued live requests. Browsing pages, reading health status, and fetching saved narration do not call paid providers. `pnpm qloo:probe` is a credential-free installed-harness check, not authenticated discovery or a quota probe.
 
-| Location                 | Responsibility                                                                                 |
-| ------------------------ | ---------------------------------------------------------------------------------------------- |
-| `src/app/`               | Server-rendered routes and JSON handlers                                                       |
-| `src/components/`        | Reading, speech, practice, glossary, feedback, and review interactions                         |
-| `src/domain/learning.ts` | Separate taste/comprehension adaptation, per-use rights, assignment binding, review scheduling |
-| `src/domain/commands.ts` | Strict Zod schemas, finite inputs, stable domain errors, bounded answer normalization          |
-| `src/content/corpus.ts`  | Original sample sources and server-only answer-key data; keys are never passed to clients      |
-| `src/server/store.ts`    | PostgreSQL reads and transactional commands; all learner access is owner-scoped                |
-| `migrations/`            | Schema, constraints, and the sample wording correction                                         |
-| `tests/`                 | Domain/corpus tests, isolated PostgreSQL invariants, and real-browser journeys                 |
+## Guest data and processing
 
-`POST /api/guest` creates an adult-confirmed guest. `POST /api/commands` accepts a UUID idempotency key and one validated command. `/api/profile/export` exports only the current guest; `DELETE /api/profile` requires the explicit deletion confirmation used by the dialog. `/api/health` checks database connectivity and states which providers are not enabled without exposing configuration values.
+A guest cookie is an access credential with a **30-day browser expiry**; only its hash is stored in PostgreSQL. There are no accounts or cross-device recovery. Clearing or losing the cookie loses access. **Cookie expiry does not delete server data:** guest records remain until the user deletes the path, and there is no automatic guest-retention cleanup.
 
-A guest cookie is an access credential, not a production account system. Clearing it or letting it expire loses access to the guest space; cookie expiry alone does not delete its database records. Export or delete the path first. There is no cross-device recovery, automated retention cleanup, external analytics, recording upload, or model processing in this edition. Tenant isolation is enforced in application queries and tested; PostgreSQL row-level policies are not implemented.
+Qloo receives the explicit cultural search or confirmed-identity ranking request, not written practice. OpenAI receives eligible source context for a requested study invitation, or the typed answer and assigned story context after separate writing consent. Requests set `store: false`; this describes the application request, not a guarantee about external provider retention. No microphone recording or pronunciation assessment is implemented.
 
-Published **source seed snapshots** have hashes that make migration refuse changed source text under the same identity. This is not a complete editorial versioning platform. Migration 002 corrects an unreleased sample question/explanation in place while preserving its answer and score: it asks what the woman is preparing, exactly as passage 1 states. Historical assessment prompts are not immutably replayable yet. Production assessment edits and source publishing need new versioned identities and an editorial release workflow.
+Settings provides owner-scoped JSON export and deletion. Exports include permitted learning activity and live results, while omitting credentials, future answer keys, and original source passages/quotations. Current source hashes and permissions are rechecked; unavailable-source details are withheld. Deletion removes the guest’s learning records and live runs. Shared provider cache and minimal hashed quota reservations have separate maintenance: cache entries expire after **24 hours**, and worker maintenance purges expired entries and reservations older than **48 hours**. Maintenance depends on the worker running. Browser-tab storage also holds pending-save recovery and narration position.
 
-## Tests and local verification
+See [architecture and trust boundaries](docs/ARCHITECTURE.md). This access model provides isolated guest state, not a production account system or a completed retention-management service.
 
-Create a separate database named **immersion_test** on the same PostgreSQL server. The integration test file explicitly redirects the connection to that database and never truncates the application database.
+## Tests and deployment
+
+Create a separate **`immersion_test`** database on the same PostgreSQL server. The integration suites redirect `DATABASE_URL` to that database and reset its learner state.
 
 ```sh
-# If using the included Compose service:
+# With the included Compose database, create this once:
 docker compose --env-file .env.local exec db createdb -U immersion immersion_test
 
 pnpm typecheck
@@ -95,35 +94,17 @@ pnpm test
 pnpm test:db
 pnpm exec playwright install chromium
 
-# With the web application already running at http://127.0.0.1:3103:
+# With the web app already running on port 3103:
 pnpm test:e2e
 pnpm build
 ```
 
-The browser tests create isolated guests in the running app database. The full desktop test deletes its own guest; other browser fixtures may remain and can be reset from that guest’s Settings or by resetting a disposable local database. Do not run these tests against a real learner deployment.
+Provider-free tests cover domain boundaries, real PostgreSQL transactions, worker recovery and budgets, source integrity and revocation, guest isolation, browser consent and recovery, mobile overflow, narration controls, and automated accessibility checks. Browser tests create isolated guests in the running app database; use a disposable local instance. Automated checks do not establish educator validation or replace a screen-reader audit.
 
-The 24 October 2026 local production check passed typecheck, lint, build, **14 domain/corpus tests, 14 PostgreSQL tests, and 4 Playwright tests**. See [verification scope](docs/VERIFICATION.md) for what those checks establish.
+[VERIFICATION](docs/VERIFICATION.md) owns dated commands, results, and limitations; [LIVE-OBSERVATIONS](docs/LIVE-OBSERVATIONS.md) owns measured provider behavior; and the [Google Cloud deployment guide](deploy/gcp/README.md) owns release operations. Refer to those records for deployment status and observed call counts.
 
-The tests cover source-grounded question assignment, age validation, ownership, concurrent/stale requests, duplicate results, adaptation consent, review timing, deletion, unavailable sources, and a cached review retry after revocation. Browser journeys cover onboarding, reload, complete practice, independent feedback, recall, export/deletion, network retry, speech-unavailable text fallback, and 320px overflow checks. Automated WCAG checks and keyboard glossary focus tests are included. Screenshots and traces are local ignored artifacts. Automated accessibility checks do not replace a real screen-reader audit or certify WCAG compliance.
+## Licensing
 
-## Live Qloo / model work that remains
+Application code and original code-generated artwork are MIT licensed. Original AI-assisted story text is dedicated under CC0-1.0 to the extent rights exist; narration and content details are in [CONTENT_LICENSE](CONTENT_LICENSE.md). No third-party cultural media is included. These licenses grant no rights to Qloo data or referenced third-party works.
 
-An isolated official Qloo MCP adapter is **prepared but not connected to discovery** in `src/integrations/qloo.ts`. It pins `@qloo/qloo-harness` 0.1.26 and MCP SDK 1.32.2 and supports the harness's nine entity types. It accepts one to ten unique confirmed UUIDs per signals/options array, releases only supplied candidate IDs, preserves all six statuses, and suppresses upstream prose. It uses a fixed hackathon endpoint, an allowlisted subprocess environment, an explicit API key, and bounded timeout/cancellation, with no sample substitution or automatic retries. This is a Node service boundary, not a browser or serverless request module.
-
-`pnpm qloo:probe` inspects the installed local harness with an empty credential environment. It makes no authenticated API call and should report `ready: false` and `liveCallMade: false`; it does not test API credentials or account entitlement. `pnpm test` includes deterministic provider-boundary tests. No live Qloo call has been verified for IMMERSION.
-
-The UI and health endpoint continue to report live discovery and model feedback as unavailable. There is no durable provider worker, shared quota limiter, entity confirmation flow, or reviewed catalog mapping. These steps are required before enabling live features:
-
-1. Connect the prepared adapter to a persistent worker and verify authentication, error envelopes, quotas, and tool contracts with the actual account. Harness readiness alone is not a successful authenticated discovery call.
-2. Implement explicit entity disambiguation and user confirmation. Create independently reviewed mappings from approved content to real Qloo entities, preserving what the relationship means. No sample piece currently claims such a mapping.
-3. Retrieve or rank a deterministic eligible shortlist under the harness’s verified contract. The inspected 0.1.26 contract permits at most ten signals/options per ranking call and workflow outputs of at most twenty. Reverify these limits against the actual pinned runtime; do not merge normalized scores across incomparable batches or call them enjoyment probabilities.
-4. Add durable run leasing, a shared credential-level quota limiter, bounded retries, cancellation, sanitized provider provenance, outage states, and an equivalent editorial baseline. The existing local activity log is a deterministic application trace, not a model-agent or Qloo tool trace.
-5. Choose and verify an actual model provider. Add bounded source-grounded generation and independently reviewed teaching output; never turn free writing into an invented score. Speech assessment would separately require explicit microphone consent, provider terms, uncertainty handling, and recording deletion controls.
-6. Complete educator review, factual/context checks, per-use third-party rights acquisition where needed, accessible media coverage, and an authorized editorial publishing/withdrawal interface. The sample currently has no watch/video format, licensed third-party creator corpus, educator-reviewed collection, or production accounts.
-7. Establish consented usability/relevance/learning evaluation, production hosting, managed secrets, backup/restore verification, rate limits, and operating procedures before a public release. No research result, measured learning gain, API entitlement, certified CEFR result, or public deployment is claimed here.
-
-## Licensing and attribution
-
-Application code and original code-generated artwork are MIT licensed. Original sample writing is dedicated under CC0 to the extent rights exist; see [CONTENT_LICENSE.md](CONTENT_LICENSE.md). No third-party cultural media is included, and no license here grants rights to Qloo data or third-party works.
-
-Fraunces (Undercase Type) and Source Sans 3 (Adobe) are self-hosted from pinned font packages, with SIL Open Font License notices in [`docs/licenses/`](docs/licenses/). Browser speech uses voices supplied by the learner’s browser/operating system, which may use an online voice service. It is labeled synthetic browser output and does not impersonate a creator.
+Fraunces by Undercase Type and Source Sans 3 by Adobe are self-hosted under the SIL Open Font License; notices are in [`docs/licenses/`](docs/licenses/). Synthetic narration and browser voices are labeled as such and do not represent a creator’s voice.

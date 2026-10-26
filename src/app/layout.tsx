@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import { connection } from 'next/server';
 import { Nav } from '@/components/nav';
 import { PendingBanner } from '@/components/pending-banner';
 import { currentLearner } from '@/server/auth';
@@ -23,6 +24,8 @@ export const metadata: Metadata = {
     'A cultural reading and listening studio for adult Spanish learners. Explore original sample stories, practice in context, and build a personal vocabulary notebook.',
 };
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  // Catalog availability, source rights and guest state are request-time database facts.
+  await connection();
   let signedIn = false;
   let due = 0;
   try {

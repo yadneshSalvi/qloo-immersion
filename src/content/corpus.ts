@@ -3,6 +3,7 @@
  * This module is server-only by import boundary: answer keys never enter client props.
  */
 import type { Cluster, Band, Format, Source, PublicAssessment } from '../domain/types';
+import { expansionDrafts } from './expansion';
 export interface AnswerKey extends PublicAssessment {
   answer: string[];
   explanation: string;
@@ -11,7 +12,7 @@ export interface CorpusEntry {
   source: Source;
   assessments: AnswerKey[];
 }
-type Draft = {
+export type Draft = {
   id: string;
   title: string;
   subtitle: string;
@@ -55,7 +56,7 @@ function entry(d: Draft, index: number): CorpusEntry {
     objective: d.objective,
     preview: segments[0].text,
     wordCount: segments.reduce((n, s) => n + s.text.split(/\s+/).length, 0),
-    releasedAt: '2026-10-24T00:00:00.000Z',
+    releasedAt: index < drafts.length ? '2026-10-24T00:00:00.000Z' : '2026-10-27T00:00:00.000Z',
     provenance: {
       mode: 'authored-sample',
       authorship:
@@ -916,7 +917,7 @@ const drafts: Draft[] = [
     ],
   },
 ];
-export const corpus: CorpusEntry[] = drafts.map(entry);
+export const corpus: CorpusEntry[] = [...drafts, ...expansionDrafts].map(entry);
 export function publicPiece(source: Source) {
   const { segments: _segments, glossary: _glossary, ...piece } = source;
   return piece;

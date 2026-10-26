@@ -1,6 +1,8 @@
 import { requireLearner } from '@/server/auth';
-import { Onboarding } from '@/components/onboarding';
+import { getLiveOverview } from '@/server/live-store';
+import { TasteStudio } from '@/components/taste-studio';
 export const metadata = { title: 'Your interests' };
 export default async function Taste() {
-  return <Onboarding learner={await requireLearner()} />;
+  const learner = await requireLearner();
+  return <TasteStudio learner={learner} initialOverview={await getLiveOverview(learner.id)} />;
 }

@@ -6,6 +6,7 @@ export interface LearningEvidence {
   assessedItems: number;
   consecutiveStrongSessions: number;
   support: SupportMode;
+  difficulty: 'comfortable' | 'some-help' | 'hard';
 }
 export interface Adaptation {
   route: 'same-interest' | 'new-interest' | 'ask';
@@ -21,6 +22,7 @@ export function chooseAdaptation(evidence: LearningEvidence): Adaptation {
   if (
     !['more', 'different', 'unsure'].includes(evidence.taste) ||
     !['independent', 'guided', 'extra'].includes(evidence.support) ||
+    !['comfortable', 'some-help', 'hard'].includes(evidence.difficulty) ||
     !Number.isInteger(evidence.assessedItems) ||
     evidence.assessedItems < 0 ||
     !Number.isInteger(evidence.consecutiveStrongSessions) ||
@@ -41,10 +43,13 @@ export function chooseAdaptation(evidence: LearningEvidence): Adaptation {
   if (evidence.comprehension === null || evidence.assessedItems < 2) {
     return {
       route,
-      support: evidence.support,
+      support: evidence.difficulty === 'hard' ? 'extra' : evidence.support,
       challenge: 'hold',
       changeProficiencyBand: false,
-      reason: 'We need another short comprehension check before changing the challenge.',
+      reason:
+        evidence.difficulty === 'hard'
+          ? 'You asked for more support. We will add it and keep the challenge steady until another short comprehension check.'
+          : 'We need another short comprehension check before changing the challenge.',
     };
   }
   if (evidence.comprehension < 0.6) {
@@ -59,6 +64,18 @@ export function chooseAdaptation(evidence: LearningEvidence): Adaptation {
           : evidence.taste === 'different'
             ? 'We will try a different topic with more support. These are two separate changes.'
             : 'We will add support and ask which topic you would prefer.',
+    };
+  }
+  if (evidence.difficulty === 'hard') {
+    return {
+      route,
+      support: 'extra',
+      challenge: 'hold',
+      changeProficiencyBand: false,
+      reason:
+        evidence.comprehension >= 0.8
+          ? 'Your source-question results were strong, and you asked for more support. We will add support and keep the challenge steady.'
+          : 'Your source-question results are saved separately from your request for support. We will add support and keep the challenge steady.',
     };
   }
   if (

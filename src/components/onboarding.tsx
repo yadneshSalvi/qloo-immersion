@@ -11,8 +11,6 @@ import {
   Utensils,
   Armchair,
   MapPin,
-  Plus,
-  X,
   ShieldCheck,
 } from 'lucide-react';
 import { Button } from './ui/button';
@@ -40,8 +38,7 @@ export function Onboarding({ learner }: { learner?: Learner }) {
   const [minutes, setMinutes] = useState<6 | 10 | 15>(learner?.profile.minutes ?? 10);
   const [support, setSupport] = useState<SupportMode>(learner?.profile.support ?? 'guided');
   const [interests, setInterests] = useState<Cluster[]>(learner?.profile.interests ?? []);
-  const [references, setReferences] = useState<string[]>(learner?.profile.references ?? []);
-  const [reference, setReference] = useState('');
+  const references = learner?.profile.references ?? [];
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const titles = ['A little about you.', 'Find a comfortable beginning.', 'What pulls you in?'];
@@ -50,13 +47,6 @@ export function Onboarding({ learner }: { learner?: Learner }) {
     'Choose a starting point. You can change it whenever you like.',
     'Follow a familiar interest, or leave room for a surprise.',
   ];
-  function addReference() {
-    const value = reference.trim();
-    if (value && references.length < 3 && !references.includes(value)) {
-      setReferences([...references, value]);
-      setReference('');
-    }
-  }
   async function submit() {
     setError('');
     if (!adult) {
@@ -76,8 +66,7 @@ export function Onboarding({ learner }: { learner?: Learner }) {
       minutes,
       support,
       interests,
-      references:
-        reference.trim() && references.length < 3 ? [...references, reference.trim()] : references,
+      references,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
     try {
@@ -99,7 +88,7 @@ export function Onboarding({ learner }: { learner?: Learner }) {
         if (!response.ok) throw new Error(result.error?.message ?? 'Your path could not be saved.');
       }
       sessionStorage.removeItem('immersion-pending');
-      router.push('/discover');
+      router.push(learner ? '/discover' : '/taste');
       router.refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Please try again. Your choices are still here.');
@@ -123,7 +112,7 @@ export function Onboarding({ learner }: { learner?: Learner }) {
         <p>No account to create. Your progress stays in this browser’s private learning space.</p>
         <div className="onboarding-safe">
           <ShieldCheck size={17} />
-          <span>Saved in PostgreSQL · isolated guest session</span>
+          <span>A private guest learning space</span>
         </div>
       </aside>
       <div className="onboarding-form">
@@ -274,59 +263,19 @@ export function Onboarding({ learner }: { learner?: Learner }) {
                 );
               })}
             </div>
-            <div className="favorites-field">
-              <label className="field-label" htmlFor="reference">
-                A few favorites? <span>Optional · up to 3</span>
-              </label>
-              <p className="fine-print">
-                An artist, a film, a book. Saved as your own references; live Qloo matching isn’t
-                enabled in this edition.
+            <div className="scope-note">
+              <span className="pill">A familiar thread comes next</span>
+              <p>
+                After saving your starting point, you can search for a favorite film, artist, book,
+                person, brand, or place and confirm the exact match.
               </p>
-              <div className="input-action">
-                <input
-                  id="reference"
-                  placeholder="e.g. Khruangbin, Studio Ghibli…"
-                  maxLength={100}
-                  value={reference}
-                  disabled={references.length >= 3}
-                  onChange={(e) => setReference(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      addReference();
-                    }
-                  }}
-                />
-                <Button
-                  size="icon"
-                  variant="secondary"
-                  onClick={addReference}
-                  aria-label="Add favorite"
-                  disabled={!reference.trim() || references.length >= 3}
-                >
-                  <Plus size={18} />
-                </Button>
-              </div>
-              <div className="chip-row">
-                {references.map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    className="chip"
-                    onClick={() => setReferences(references.filter((r) => r !== item))}
-                    aria-label={`Remove ${item}`}
-                  >
-                    {item}
-                    <X size={13} />
-                  </button>
-                ))}
-              </div>
             </div>
             <div className="sample-note">
               <span className="status-dot" />
               <p>
                 Your first recommendations use your chosen categories and this original sample
-                collection. No live affinity is implied.
+                collection. Then you can explicitly request Qloo cultural connections from confirmed
+                favorites.
               </p>
             </div>
           </div>

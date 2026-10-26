@@ -15,6 +15,7 @@ test('liking a hard piece retains interest and adds support', () => {
     assessedItems: 3,
     consecutiveStrongSessions: 0,
     support: 'guided',
+    difficulty: 'comfortable',
   });
   assert.equal(result.route, 'same-interest');
   assert.equal(result.support, 'extra');
@@ -27,6 +28,7 @@ test('disliking a comprehensible piece changes interest without lowering the cha
     assessedItems: 3,
     consecutiveStrongSessions: 5,
     support: 'guided',
+    difficulty: 'comfortable',
   });
   assert.equal(result.route, 'new-interest');
   assert.equal(result.challenge, 'hold');
@@ -39,6 +41,7 @@ test('poor comprehension and dislike produce separate adjustments', () => {
     assessedItems: 3,
     consecutiveStrongSessions: 0,
     support: 'independent',
+    difficulty: 'comfortable',
   });
   assert.equal(result.route, 'new-interest');
   assert.equal(result.challenge, 'easier-piece');
@@ -51,6 +54,7 @@ test('a stretch requires multiple strong observations and positive interest', ()
     assessedItems: 3,
     consecutiveStrongSessions: 1,
     support: 'guided' as const,
+    difficulty: 'comfortable' as const,
   };
   assert.equal(chooseAdaptation(base).challenge, 'hold');
   assert.equal(
@@ -67,6 +71,7 @@ test('unscored and sparse observations do not invent comprehension', () => {
         assessedItems: 1,
         consecutiveStrongSessions: 5,
         support: 'guided',
+        difficulty: 'comfortable',
       }).challenge,
       'hold',
     );
@@ -81,9 +86,33 @@ test('nonfinite or out-of-range assessments fail validation', () => {
         assessedItems: 3,
         consecutiveStrongSessions: 1,
         support: 'guided',
+        difficulty: 'comfortable',
       }),
     );
 });
+test('an explicit request for support holds the challenge despite strong results and a stretch-ready history', () => {
+  for (const [taste, route] of [
+    ['more', 'same-interest'],
+    ['different', 'new-interest'],
+    ['unsure', 'ask'],
+  ] as const) {
+    const result = chooseAdaptation({
+      taste,
+      comprehension: 1,
+      assessedItems: 3,
+      consecutiveStrongSessions: 5,
+      support: 'guided',
+      difficulty: 'hard',
+    });
+    assert.equal(result.route, route);
+    assert.equal(result.support, 'extra');
+    assert.equal(result.challenge, 'hold');
+    assert.equal(result.changeProficiencyBand, false);
+    assert.match(result.reason, /source-question results were strong/);
+    assert.match(result.reason, /asked for more support/);
+  }
+});
+
 const rights: RightsRecord = {
   versionId: 'v1',
   state: 'released',

@@ -60,13 +60,15 @@ export default async function Settings() {
           <h2>Listening & voice</h2>
         </div>
         <p>
-          Listening is an optional browser-generated reading of the original text. Available voices
-          depend on your browser and operating system. Your browser or operating system may use an
-          online voice service.
+          Listening uses a saved synthetic Spanish narration where one is available. Playback begins
+          only when you choose to play. You can pause, change speed, and seek to a passage. If saved
+          narration is unavailable, an optional browser-generated voice reads the selected passage;
+          voices depend on your browser and operating system and may use an online service.
         </p>
         <p>
-          No microphone is used and no audio recording is collected. Pronunciation scoring and AI
-          free-writing feedback are unavailable in this sample edition.
+          No microphone is used and no audio recording is collected. There is no pronunciation
+          score. Optional AI feedback is available for a typed opinion after the fixed source
+          exercise.
         </p>
       </section>
       <section className="settings-section">
@@ -80,9 +82,19 @@ export default async function Settings() {
           sign-in. Clearing the cookie loses access; export or delete your path first.
         </p>
         <p>
-          Only your own session can read or change your notes and responses. Your personal practice
-          is not sent to Qloo or a model provider in this edition.
+          Only your own guest session can read or change your notes and responses. Cultural search
+          and discovery use Qloo when you explicitly request them. Your writing is not sent to Qloo.
         </p>
+        <p>
+          Discovery may use an AI provider to prepare study suggestions from eligible stories.
+          Writing feedback is a separate action: only after you agree to processing and submit does
+          the app send your typed answer and story context to the AI provider. You can request up to
+          three writing feedback responses per session. These suggestions do not change your fixed
+          comprehension results or certify a language level.
+        </p>
+        <Link href="/evidence" className="quiet-link">
+          See processing modes & saved evidence <ArrowUpRight size={16} />
+        </Link>
         <DataControls />
       </section>
     </div>

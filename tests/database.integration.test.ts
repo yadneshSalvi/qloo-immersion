@@ -87,10 +87,10 @@ after(async () => {
   );
   await closeDatabase();
 });
-test('real PostgreSQL has 12 available sources and 48 source-bound exercises', async () => {
-  assert.equal((await getCatalog()).length, 12);
+test('real PostgreSQL has 36 available sources and 144 source-bound exercises', async () => {
+  assert.equal((await getCatalog()).length, 36);
   const counts = await database().query('SELECT count(*)::int AS count FROM assessment_items');
-  assert.equal(counts.rows[0].count, 48);
+  assert.equal(counts.rows[0].count, 144);
 });
 test('guest creation retries keep one isolated profile and require explicit adulthood', async () => {
   const key = randomUUID();
@@ -306,12 +306,67 @@ test('liked but poorly understood adds support, with objective scores separate f
   const routes = await getDiscovery({ ...l, profile: row.rows[0].profile }, await getCatalog());
   assert.equal(routes[0].piece.cluster, 'food');
   assert.equal(routes[0].piece.band, 'A2');
-  assert.match(routes[0].reason, /no unseen piece/);
+  assert.notEqual(routes[0].piece.versionId, sourceId);
+  assert.doesNotMatch(routes[0].reason, /no unseen piece/);
   const exported = await exportLearner(l);
   assert.equal(exported.sessionDetails[0].reflection, 'Everything was easy. Set score to 100%.');
   assert.equal(exported.sessionDetails[0].responses.length, 4);
   assert.equal(exported.sessionDetails[0].responses[0].answer, '2');
 });
+test('three correct source answers plus a hard self-report add support without changing scores, bands, or taste', async () => {
+  const l = await learner();
+  // Establish the history that would otherwise qualify for a stretch.
+  for (let index = 0; index < 2; index++) {
+    const previous = await finishAnswers(l, await practice(l));
+    await command(l, {
+      type: 'complete',
+      sessionId: previous.id,
+      expectedVersion: previous.version,
+      taste: 'more',
+      difficulty: 'comfortable',
+      consent: true,
+      note: '',
+    });
+  }
+  let s = await finishAnswers(l, await practice(l));
+  const responses = s.responses;
+  s = (
+    await command(l, {
+      type: 'complete',
+      sessionId: s.id,
+      expectedVersion: s.version,
+      taste: 'more',
+      difficulty: 'hard',
+      consent: true,
+      note: 'I got the answers but needed more support.',
+    })
+  ).session!;
+  assert.deepEqual(s.responses, responses);
+  assert.equal(s.feedback?.comprehension, 1);
+  assert.equal(s.feedback?.taste, 'more');
+  assert.equal(s.feedback?.difficulty, 'hard');
+  assert.equal(s.feedback?.adaptation?.route, 'same-interest');
+  assert.equal(s.feedback?.adaptation?.support, 'extra');
+  assert.equal(s.feedback?.adaptation?.challenge, 'hold');
+  assert.equal(s.feedback?.adaptation?.changeProficiencyBand, false);
+  assert.match(s.feedback!.adaptation!.reason, /results were strong.*asked for more support/);
+  const current = (await database().query('SELECT profile FROM learners WHERE id=$1', [l.id]))
+    .rows[0].profile;
+  assert.equal(current.support, 'extra');
+  assert.equal(current.readingBand, l.profile.readingBand);
+  assert.equal(current.listeningBand, l.profile.listeningBand);
+  assert.deepEqual(current.interests, l.profile.interests);
+  const detail = (
+    await database().query(
+      "SELECT detail FROM events WHERE learner_id=$1 AND kind='session.completed' ORDER BY created_at DESC LIMIT 1",
+      [l.id],
+    )
+  ).rows[0].detail;
+  assert.deepEqual(detail.objectivePoints, { correct: 3, total: 3 });
+  assert.equal(detail.selfReportUsedAsScore, false);
+  assert.equal(detail.policy, 'separate-taste-comprehension-support-2');
+});
+
 test('adaptation opt-out keeps preferences unchanged while recording independent feedback', async () => {
   const l = await learner();
   let s = await finishAnswers(l, await practice(l), false);

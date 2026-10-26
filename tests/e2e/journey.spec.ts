@@ -11,6 +11,8 @@ async function startPath(page: Page, interest = 'Food culture') {
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await page.getByRole('button', { name: interest, exact: true }).click();
   await page.getByRole('button', { name: 'Find my first story' }).click();
+  await expect(page).toHaveURL(/\/taste$/);
+  await page.getByRole('link', { name: 'Browse the collection' }).click();
   await expect(page).toHaveURL(/\/discover$/);
   await expect(page.getByRole('heading', { name: 'A little curiosity, Alex.' })).toBeVisible();
 }
@@ -100,7 +102,9 @@ test('desktop: onboarding, source-bound practice, durable recall, adaptation evi
   );
   await expect(page.locator('.discovery-feature')).not.toContainText('Una mesa en el mercado');
   await page.goto('/evidence');
-  await expect(page.getByText('No live Qloo requests made by this app')).toBeVisible();
+  await expect(
+    page.getByText('Qloo affinity is query-relative cultural evidence', { exact: false }),
+  ).toBeVisible();
   await page.getByText('Same challenge, a different cultural direction.', { exact: true }).click();
   await expect(page.locator('.trace-event[open]')).toContainText('self Report Used As Score');
   await page.screenshot({ path: '.artifacts/evidence-desktop.png', fullPage: true });
@@ -158,7 +162,9 @@ test('mobile: no overflow, text fallback, network retry and liked-hard adaptatio
   ).toBeVisible();
   await page.goto('/discover');
   await expect(page.locator('.adaptation-banner')).toContainText('add more support');
-  await expect(page.locator('.discovery-feature')).toContainText('Una mesa en el mercado');
+  await expect(page.locator('.discovery-feature .feature-category')).toContainText('Food culture');
+  await expect(page.locator('.discovery-feature .band-tag')).toContainText('A2 working band');
+  await expect(page.locator('.discovery-feature')).not.toContainText('Una mesa en el mercado');
   await page.screenshot({ path: '.artifacts/discover-mobile.png', fullPage: true });
   for (const route of ['/', '/discover', '/review', '/path', '/settings', '/evidence']) {
     await page.setViewportSize({ width: 320, height: 760 });

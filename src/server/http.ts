@@ -1,8 +1,9 @@
 import { ZodError } from 'zod';
 import { DomainError } from '../domain/commands';
+import { ProviderError } from '../integrations/qloo-live';
 export function assertOrigin(request: Request) {
   const origin = request.headers.get('origin');
-  const allowed = new Set([new URL(request.url).origin, process.env.APP_ORIGIN].filter(Boolean));
+  const allowed = new Set([process.env.APP_ORIGIN || new URL(request.url).origin]);
   if (!origin || !allowed.has(origin))
     throw new DomainError(
       'ORIGIN_REJECTED',
@@ -13,15 +14,58 @@ export function assertOrigin(request: Request) {
     throw new DomainError('INVALID_CONTENT_TYPE', 'Send a JSON request.');
 }
 export async function readJson(request: Request) {
-  const text = await request.text();
-  if (text.length > 16000) throw new DomainError('REQUEST_TOO_LARGE', 'This request is too large.');
+  const maximumBytes = 16000;
+  const tooLarge = () => new DomainError('REQUEST_TOO_LARGE', 'This request is too large.', 413);
+  if (Number(request.headers.get('content-length')) > maximumBytes) throw tooLarge();
+  const chunks: Uint8Array[] = [];
+  const reader = request.body?.getReader();
+  let bytes = 0;
+  if (reader) {
+    try {
+      while (true) {
+        const part = await reader.read();
+        if (part.done) break;
+        bytes += part.value.byteLength;
+        if (bytes > maximumBytes) {
+          await reader.cancel().catch(() => undefined);
+          throw tooLarge();
+        }
+        chunks.push(part.value);
+      }
+    } finally {
+      reader.releaseLock();
+    }
+  }
   try {
-    return JSON.parse(text) as unknown;
+    return JSON.parse(
+      new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)),
+    ) as unknown;
   } catch {
     throw new DomainError('INVALID_JSON', 'The request could not be read. Please try again.');
   }
 }
 export function apiError(error: unknown) {
+  if (error instanceof ProviderError)
+    return Response.json(
+      {
+        error: {
+          code: error.code,
+          message: error.message,
+          retryable: ['TIMEOUT', 'UPSTREAM', 'STALE', 'INTERRUPTED'].includes(error.code),
+        },
+      },
+      {
+        status:
+          error.code === 'BUDGET'
+            ? 429
+            : error.code === 'INPUT' || error.code === 'GROUNDING'
+              ? 422
+              : error.code === 'STALE'
+                ? 409
+                : 503,
+        headers: privateHeaders,
+      },
+    );
   if (error instanceof ZodError)
     return Response.json(
       {

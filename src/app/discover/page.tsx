@@ -1,16 +1,18 @@
 import { currentLearner } from '@/server/auth';
 import { getCatalog, getDiscovery, getBookmarks, getResume } from '@/server/store';
+import { getLiveOverview } from '@/server/live-store';
 import { Discovery } from '@/components/discovery';
 export const metadata = { title: 'Discover your next story' };
 export default async function DiscoverPage() {
   const [learner, catalog] = await Promise.all([currentLearner(), getCatalog()]);
-  const [routes, bookmarks, resume] = learner
+  const [routes, bookmarks, resume, liveOverview] = learner
     ? await Promise.all([
         getDiscovery(learner, catalog),
         getBookmarks(learner.id),
         getResume(learner.id),
+        getLiveOverview(learner.id),
       ])
-    : [[], [], null];
+    : [[], [], null, null];
   return (
     <Discovery
       catalog={catalog}
@@ -18,6 +20,7 @@ export default async function DiscoverPage() {
       routes={routes}
       bookmarks={bookmarks}
       resume={resume}
+      liveOverview={liveOverview}
     />
   );
 }

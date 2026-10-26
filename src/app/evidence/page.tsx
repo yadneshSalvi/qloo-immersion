@@ -10,6 +10,8 @@ import {
   Circle,
 } from 'lucide-react';
 import { currentLearner } from '@/server/auth';
+import { getLiveOverview } from '@/server/live-store';
+import { DiscoveryComparison } from '@/components/live-discovery';
 import { getEvents, getCatalog } from '@/server/store';
 export const metadata = { title: 'About this edition & your evidence' };
 function Detail({ value }: { value: unknown }) {
@@ -20,7 +22,14 @@ function Detail({ value }: { value: unknown }) {
 }
 export default async function Evidence() {
   const [learner, catalog] = await Promise.all([currentLearner(), getCatalog()]);
-  const events = learner ? await getEvents(learner.id) : [];
+  const [events, live] = learner
+    ? await Promise.all([getEvents(learner.id), getLiveOverview(learner.id)])
+    : [[], null];
+  const discovery =
+    live?.latestDiscovery?.state === 'succeeded' &&
+    live.latestDiscovery.result?.kind === 'discovery'
+      ? live.latestDiscovery.result
+      : null;
   return (
     <div className="container evidence-page">
       <div className="page-heading">
@@ -47,7 +56,9 @@ export default async function Evidence() {
           <strong>{catalog.length} original fictional Spanish pieces</strong>, written with AI
           assistance for IMMERSION. The illustrations are original code artwork. Sample language,
           glosses, translations, and assessment keys are <strong>pending educator review</strong>.
-          No third-party media, Qloo source mapping, or measured learning gain is asserted.
+          No third-party media is included. Cultural film connections use a separate editorial theme
+          bridge; they are not a claim that these stories came from Qloo. No measured learning gain
+          is asserted.
         </p>
       </div>
       <section className="capabilities">
@@ -55,11 +66,14 @@ export default async function Evidence() {
           <span className="capability-icon">
             <Check size={20} />
           </span>
-          <span className="eyebrow">Working locally</span>
+          <span className="eyebrow">In this edition</span>
           <h2>Your complete sample journey</h2>
           <ul>
             <li>Saved interests and self-selected A2/B1 starting bands</li>
-            <li>Reading, translations, source-specific exercises, and optional browser voice</li>
+            <li>
+              Reading, translations, source-specific exercises, and synthetic narration where
+              available
+            </li>
             <li>Durable sessions, vocabulary, and 1/3/7/14-day review scheduling</li>
             <li>Separate taste and comprehension feedback with visible adaptation</li>
             <li>Isolated guest data, export, and deletion</li>
@@ -69,43 +83,61 @@ export default async function Evidence() {
           <span className="capability-icon muted">
             <Link2 size={20} />
           </span>
-          <span className="eyebrow">Not enabled</span>
-          <h2>Live cultural discovery</h2>
+          <span className="eyebrow">
+            {!live
+              ? 'After you create a path'
+              : live.qlooAvailable
+                ? 'Available on request'
+                : 'Currently unavailable'}
+          </span>
+          <h2>Cultural discovery</h2>
           <p>
-            Qloo entity matching and affinity ranking are unavailable in this sample build.
-            Categories you choose guide deterministic editorial selection. Your named favorites are
-            stored as expressed references and remain unresolved.
+            Confirm the exact Qloo entity for a favorite before requesting discovery. Qloo ranks
+            film connections; IMMERSION maps film themes to original Spanish pieces. Saved results
+            are labeled live or cached. Editorial browsing remains available when the provider is
+            unavailable.
           </p>
           <div className="capability-status">
             <Circle size={10} />
-            No live Qloo requests made by this app
+            {live?.qlooAvailable
+              ? 'Qloo configured · explicit requests only'
+              : 'No provider request is made by opening this page'}
           </div>
           <p className="fine-print">
-            Qloo affinity would be query-relative cultural evidence, never a probability of
-            enjoyment, language assessment, or grant of media rights.
+            Qloo affinity is query-relative cultural evidence, never a probability of enjoyment,
+            language assessment, or grant of media rights.
           </p>
         </article>
         <article>
           <span className="capability-icon muted">
             <Sparkles size={20} />
           </span>
-          <span className="eyebrow">Not enabled</span>
-          <h2>AI writing & speech assessment</h2>
+          <span className="eyebrow">
+            {!live
+              ? 'After a source exercise'
+              : live.coachingAvailable
+                ? 'Available with consent'
+                : 'Currently unavailable'}
+          </span>
+          <h2>Optional AI writing feedback</h2>
           <p>
-            Short exercises use fixed authored answer keys with useful explanations. Free writing is
-            saved as an unscored reflection. There is no model feedback, speech recognition, or
-            pronunciation score.
+            Source questions use fixed authored answer keys. A separate optional writing activity
+            sends your answer and story context to an AI provider only with your processing consent.
+            It offers one success, at most two corrections, source quotes, and up to three requests
+            per session. There is no speech recognition or pronunciation score.
           </p>
           <div className="capability-status">
             <Circle size={10} />
-            No live model requests made by this app
+            Writing feedback does not change comprehension results
           </div>
           <p className="fine-print">
-            Optional read-aloud uses your browser’s own voice service, always on an explicit click,
-            with the complete text as a fallback.
+            Saved narration uses an explicitly synthetic voice with timed passage seeking. If it is
+            unavailable, optional read-aloud uses your browser’s voice service. Playback always
+            begins on an explicit click, and the complete text stays available.
           </p>
         </article>
       </section>
+      {discovery && <DiscoveryComparison result={discovery} />}
       <section className="evidence-policy">
         <div>
           <ShieldCheck size={22} />
@@ -171,7 +203,11 @@ export default async function Evidence() {
                       }).format(new Date(event.createdAt))}
                     </span>
                   </div>
-                  <span className="trace-mode">Authored sample</span>
+                  <span className="trace-mode">
+                    {event.kind.startsWith('live.') || event.kind.startsWith('interest.')
+                      ? 'Recorded action'
+                      : 'Authored sample'}
+                  </span>
                   <ArrowUpRight size={17} />
                 </summary>
                 <dl>
