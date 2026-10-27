@@ -52,8 +52,14 @@ Cloud migration and runtime checks separately verified the instance-specific dat
 
 The application image is `sha256:21961b5ad7176cfede3f533680d3525e0b6cf66b188c2e7be8e872151dd08275`, with web revision `immersion-web-00004-266` and worker revision `immersion-worker-00003-jpl`. Actual hosted provider observations are recorded separately from this provider-free acceptance run.
 
-## Demonstration film
+## Demonstration film — v0.2.0
 
-The reviewed 171-second export uses actual hosted product captures and an explicitly fictional learner. The final H.264/AAC file passed full decode, 17 decoded keyframe checks, 22 transition-frame checks and caption bounds/overlap validation. Encoded audio measured −14.54 LUFS and −1.51 dB true peak with no clipped samples. The editable preview was reviewed before rendering; the evidence and scope statements were checked against the hosted walkthrough. See [the release record](RELEASE.md#demonstration-film-verification) for the artifact hash and production details. No subjective human listening review is claimed.
+The reviewed 276.600-second export contains 8,298 frames at 1920×1080 and 30 fps. It uses actual hosted product captures and an explicitly fictional learner. Real input and clicks stay at their performed speed; the full app opens and closes the film, with one gentle focus move and no added headings or burned captions. All seventy native English caption cues are optional and off by default.
 
-The [public film player](https://immersion-demo-dnp3wctt7a-uc.a.run.app) passed anonymous asset hash, MIME, HEAD and byte-range checks. Fresh-browser playback, seeking, optional English captions and error-free media loading were verified against the deployed service.
+The final H.264/AAC file passed complete decode, inspection of 140 encoded review frames including all edit seams, and caption bounds/overlap validation. Actual encoded audio measures −14.22 LUFS and −1.42 dBTP. The complete original Spanish sentence has zero English overlap and source correlation 0.997789. A full encoded model-listener audition passed after targeted repairs; this is not a claim of human listening or educator review.
+
+The [public player](https://immersion-demo-dnp3wctt7a-uc.a.run.app/) passed full-file SHA-256, asset MIME/hash, HTTP/2, start/end 206 ranges, security headers and excluded-route checks. Fresh-browser metadata reported 276.6 seconds, 1920×1080 and playback rate 1. Playback advanced from 0 to 4.686 seconds; seeks to the Spanish-sample result at 100.534, complete typed opinion at 174.817 and notebook ending at 271.679 loaded without media errors. Optional English captions visibly rendered while playback reached 179.917 during the feedback request and at the ending. Reload restored time zero, paused, with captions disabled.
+
+The isolated media service is revision `immersion-demo-00002-qgz`; its identity remains roleless and has no application environment, secrets, volumes or VPC connection. Application and worker revisions are unchanged. The [release record](RELEASE.md#demonstration-film-verification) contains the exact movie hash, production checks and deployment details.
+
+The v0.2.0 media/documentation commit is subject to the same `Verify IMMERSION` workflow: credential-free production build, typecheck, lint, unit tests, PostgreSQL integration tests, migration and production browser tests. The GitHub release links its exact passing commit and CI run; earlier application passes above remain separately dated evidence.

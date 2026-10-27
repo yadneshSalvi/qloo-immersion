@@ -2,7 +2,9 @@
 
 **Follow your curiosity. Find your Spanish.**
 
-[Try the live application](https://immersion-web-dnp3wctt7a-uc.a.run.app) · [Watch the demo film](https://immersion-demo-dnp3wctt7a-uc.a.run.app) · [Submission story](SUBMISSION.md) · [Verification](docs/VERIFICATION.md)
+[Try the live application](https://immersion-web-dnp3wctt7a-uc.a.run.app) · [Watch the 4 min 37 sec demo film](https://immersion-demo-dnp3wctt7a-uc.a.run.app) · [Submission story](SUBMISSION.md) · [Verification](docs/VERIFICATION.md)
+
+The [v0.2.0 film](docs/RELEASE.md) follows one fictional learner through the working app, with real typing and clicks, an original Spanish listening excerpt, and optional English captions. The application and worker deployments are unchanged.
 
 IMMERSION is a cultural reading and listening studio for English-speaking adults (18+) learning Spanish around **A2–B1 working bands**. Confirm a favorite, follow a cultural connection into an original story, practice its language, and keep useful expressions in a personal word notebook.
 

@@ -1,25 +1,31 @@
 # IMMERSION demonstration film hosting
 
-This separate static service serves only the approved final MP4, poster and WebVTT captions. The page offers native playback controls, optional English captions, downloads, and verified application/source links. It uses a dedicated roleless media identity, minimum zero / maximum one instance, and no database, secrets, VPC, provider credentials or application state.
+This isolated static service serves only the approved final MP4, poster and WebVTT captions. The page offers native playback controls, optional English captions that are off by default, downloads, and verified application/source links. It uses a dedicated roleless media identity, minimum zero / maximum one instance, and no database, application secrets, VPC or provider credentials.
 
-Prepare the context only after reviewing the final assets. Never upload the film project, captures, production transcripts, plans, or raw provider data. Run from the IMMERSION repository:
+Prepare the context only after reviewing the final assets. Keep the film project, captures, production transcripts, plans and raw provider data outside the public repository and build context. Run from the IMMERSION repository:
 
 ```sh
 python3 deploy/gcp/media/prepare.py \
   --video /absolute/path/to/IMMERSION-demo.mp4 \
-  --poster /absolute/path/to/IMMERSION-poster.png \
+  --poster /absolute/path/to/IMMERSION-poster.jpg \
   --captions /absolute/path/to/IMMERSION-demo.vtt \
   --app-url https://VERIFIED_PUBLIC_APP_ORIGIN \
   --source-url https://github.com/VERIFIED_OWNER/VERIFIED_REPOSITORY \
   --output /absolute/private/new-media-build
 ```
 
-The output must be outside this repository. Preparation checks an MP4 container no larger than 30 MiB, PNG/JPEG poster data, and nonempty WebVTT captions. It substitutes the public URLs, selects the poster MIME type, and stages exactly eight regular files: `.gcloudignore`, `Dockerfile`, `cloudbuild.yaml`, `nginx.conf`, `index.html`, `IMMERSION-demo.mp4`, `poster`, and `captions.vtt`. The generated ignore file admits only those eight files. Save the printed SHA-256 media manifest with private release evidence.
+The new output directory must be outside the repository. Preparation checks an MP4 no larger than **128 MiB**, PNG/JPEG poster data and nonempty WebVTT captions. It substitutes the public URLs, selects the poster MIME type and stages exactly eight regular files: `.gcloudignore`, `Dockerfile`, `cloudbuild.yaml`, `nginx.conf`, `index.html`, `IMMERSION-demo.mp4`, `poster` and `captions.vtt`. The generated ignore file admits only those files. Keep the printed media hashes with private release evidence. Media URLs use `?v=0.2.0`; change that cache version when replacing approved assets in a later release.
 
-After final publication approval, create the dedicated `immersion-media` service account with no project roles. It must also have no resource-level secret grants. Set `IMMERSION_MEDIA_BUILD_DIR` to the prepared directory and `IMMERSION_MEDIA_IMAGE` to a unique tag in the project's `immersion-images` Artifact Registry repository. Select the authorized Google Cloud account/wrapper as described in the parent deployment README, then run `./deploy/gcp/media/publish.sh`.
+The service requires **nginx h2c and Cloud Run end-to-end HTTP/2**. HTTP/1 response limits are too small for this movie. The pinned nginx configuration enables `http2 on;`, and `publish.sh` uses `--use-http2`. Both preparation and publication enforce the 128 MiB MP4 bound. Do not remove one half of this transport configuration.
 
-The script verifies the exact context and roleless identity, builds only the staged files, resolves an immutable digest, and deploys `immersion-demo` in `us-central1`. It explicitly clears environment variables, secrets and VPC connections. The service uses request-based compute, 512 MiB memory and scale-to-zero; builds, registry storage, traffic and compute usage are billed separately. No media or application service is modified until publication is approved and the script is run.
+After final publication approval, use the dedicated `immersion-media` service account with no project roles or resource-level secret grants. Set `IMMERSION_MEDIA_BUILD_DIR` to the prepared directory and `IMMERSION_MEDIA_IMAGE` to a unique tag in the project's `immersion-images` Artifact Registry repository. Select the authorized Google Cloud account/wrapper as described in the parent deployment README, then run `./deploy/gcp/media/publish.sh`.
 
-Before sharing the public HTTPS URL, verify anonymous page access, asset SHA-256 matches, MIME types (`video/mp4`, `image/png` or `image/jpeg`, and `text/vtt`), a 206 response with correct `Content-Range`, and playback, seeking and optional native captions in a fresh browser. Nginx allows only the page, three assets and health endpoint, disables directory listing/access logs, and supplies restrictive response headers. Never publish unfilled URL placeholders.
+The script checks the exact context, file bound, h2c configuration and roleless identity, builds the staged files, resolves an immutable digest and deploys only `immersion-demo` in `us-central1`. It clears environment variables, secrets and VPC connections. The service uses request-based compute, 512 MiB memory and scale-to-zero. Builds, registry storage, traffic and compute are billed separately.
 
-The approved release is published at [IMMERSION demo film](https://immersion-demo-dnp3wctt7a-uc.a.run.app), revision `immersion-demo-00001-r4s`. Cloud Build `8ce8b2fb-0395-4d56-90e4-b4af98648ca6` produced the digest-pinned media image `sha256:4fb13e75557a381e5a84591760a9402368f0c4a620c8cb6b10174d0959da71bd`. Anonymous page/health responses, all three downloaded asset hashes and MIME types, MP4 HEAD metadata, and HTTP 206 byte ranges passed verification. The service configuration confirms the dedicated media account, minimum zero / maximum one, and no environment variables, secrets, volumes or VPC connection. Final MP4 SHA-256: `e3f8203a8a825c5037375077b19fc693d8a313c432e3c46441c8f72cff3872f1`.
+Verify anonymous access, a complete download with the approved SHA-256, MIME types, start/end HTTP 206 ranges with correct bytes, and fresh-browser playback, seeking and optional captions before sharing a release. Reload must leave captions off. Nginx allows only the page, three assets and health endpoint, disables directory listing/access logs and provides restrictive response headers.
+
+## Verified v0.2.0 publication
+
+[The public player](https://immersion-demo-dnp3wctt7a-uc.a.run.app/) serves the 276.600-second film at 1920×1080 and 30 fps. The 100,157,214-byte MP4 has SHA-256 `acac566eb983207aad39f3b1a30aea2cec5ea55011bb25b88835d27845bb5951`. Full download/hash, HTTP/2, range requests, poster/captions, headers, health and 404 allowlist checks pass. Fresh-browser playback, seeking through the Spanish excerpt, complete opinion and ending, visible optional captions, and default-off reload state also pass.
+
+Revision `immersion-demo-00002-qgz` receives 100% traffic. Build `57edf724-873f-448d-a9ea-a67248717639` produced image `sha256:5ac1a245e3dbfed3522d6cdbcfe1ac5cb0952349bb3a3f5ad68586287c8a2ba0`. Runtime inspection confirms h2c, the existing roleless identity, minimum zero / maximum one, and no environment, secrets, volumes or VPC. Application `immersion-web-00004-266` and worker `immersion-worker-00003-jpl` are unchanged. See the [release verification](../../../docs/RELEASE.md).

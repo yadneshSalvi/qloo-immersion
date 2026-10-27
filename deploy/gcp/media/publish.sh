@@ -17,6 +17,10 @@ if {p.name for p in root.iterdir()} != expected or not all(p.is_file() and not p
     raise SystemExit('The media build directory must contain exactly the eight prepared regular files.')
 if '__IMMERSION_' in (root/'index.html').read_text():
     raise SystemExit('Fill the verified public application/source links before publishing.')
+if not 0 < (root/'IMMERSION-demo.mp4').stat().st_size <= 128 * 1024 * 1024:
+    raise SystemExit('The final MP4 must be nonempty and at most 128 MiB.')
+if 'http2 on;' not in (root/'nginx.conf').read_text():
+    raise SystemExit('This media service requires the reviewed h2c nginx configuration.')
 PY
 # This identity must have no project roles or access to application secrets.
 policy=$("$gc" projects get-iam-policy "$IMMERSION_GCP_PROJECT" --format=json)
@@ -28,7 +32,7 @@ digest=$("$gc" artifacts docker images describe "$IMMERSION_MEDIA_IMAGE" --forma
 [[ "$digest" =~ ^sha256:[a-f0-9]{64}$ ]] || { printf '%s\n' 'An immutable image digest is required.' >&2; exit 1; }
 image="${IMMERSION_MEDIA_IMAGE%:*}@$digest"
 "$gc" run deploy immersion-demo --region="$IMMERSION_REGION" --image="$image" \
-  --service-account="$media_sa" --port=8080 --cpu=1 --memory=512Mi \
+  --service-account="$media_sa" --use-http2 --port=8080 --cpu=1 --memory=512Mi \
   --cpu-throttling --execution-environment=gen2 --min=0 --min-instances=0 \
   --max=1 --max-instances=1 --concurrency=40 --timeout=300 \
   --clear-network --clear-vpc-connector --clear-env-vars --clear-secrets \

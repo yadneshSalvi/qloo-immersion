@@ -16,7 +16,7 @@ The central idea is that _what you want to explore_ and _how much support you ne
 6. Give separate enjoyment and difficulty feedback. Inspect the stored adaptation, recall the saved word, and see its next review date.
 7. Inspect the evidence page, export your guest data, or delete that guest space through settings. Keep exports private.
 
-[Open the live application](https://immersion-web-dnp3wctt7a-uc.a.run.app) or inspect the public [qloo-immersion repository](https://github.com/yadneshSalvi/qloo-immersion). [Watch the 171-second demo film](https://immersion-demo-dnp3wctt7a-uc.a.run.app).
+[Open the live application](https://immersion-web-dnp3wctt7a-uc.a.run.app) or inspect the public [qloo-immersion repository](https://github.com/yadneshSalvi/qloo-immersion). [Watch the 4 min 37 sec demo film](https://immersion-demo-dnp3wctt7a-uc.a.run.app).
 
 ## Why Qloo belongs in this product
 
