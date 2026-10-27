@@ -16,7 +16,7 @@ The central idea is that _what you want to explore_ and _how much support you ne
 6. Give separate enjoyment and difficulty feedback. Inspect the stored adaptation, recall the saved word, and see its next review date.
 7. Inspect the evidence page, export your guest data, or delete that guest space through settings. Keep exports private.
 
-The application and demo-film links will be added after their hosted acceptance checks. The public repository is [qloo-immersion](https://github.com/yadneshSalvi/qloo-immersion).
+[Open the live application](https://immersion-web-dnp3wctt7a-uc.a.run.app) or inspect the public [qloo-immersion repository](https://github.com/yadneshSalvi/qloo-immersion). [Watch the 171-second demo film](https://immersion-demo-dnp3wctt7a-uc.a.run.app).
 
 ## Why Qloo belongs in this product
 
@@ -28,7 +28,7 @@ The responsibilities stay visible: Qloo does not supply the stories, language ba
 
 The collection contains 36 original fictional pieces across six cultural threads, 144 fixed exercises, and 15 generated Spanish narrations with timed passage seeking. Real PostgreSQL stores guest profiles, exact source assignments, answers, vocabulary schedules, adaptation records, durable provider runs, and usage reservations. A separate worker makes bounded Qloo and OpenAI requests; the public web process holds no provider keys.
 
-Live provider checks ranked the same six film candidates differently for Rosalía and Radiohead. A real local browser rehearsal then completed identity confirmation, Qloo discovery, AI study planning, narration, practice, source-grounded writing feedback, adaptation, and word recall. These are measured integration observations, documented in [live observations](docs/LIVE-OBSERVATIONS.md), not claims about learner preference or educational improvement.
+Live provider checks ranked the same six film candidates differently for Rosalía and Radiohead. Both local and hosted browser rehearsals completed identity confirmation, Qloo discovery, AI study planning, narration, practice, source-grounded writing feedback, adaptation, and word recall. In the hosted rehearsal, three correct source answers plus a request for help produced extra support while preserving the A2 band. The following lesson opened its source and authored hint, and the saved word was scheduled for the next day. These are measured integration observations, documented in [live observations](docs/LIVE-OBSERVATIONS.md), not claims about learner preference or educational improvement.
 
 ## Design and interaction
 

@@ -40,8 +40,20 @@ The corpus contains 36 original fictional pieces and 144 fixed exercises. A2/B1 
 
 ## GitHub CI
 
-The initial run, `40420713119` on `109d44e`, passed the credential-free build, typecheck, lint, 58 unit tests, 31 PostgreSQL tests and migration. Its browser suite found an ambiguous test locator: the production framework adds its own route-announcer alert. The connection-loss assertion was narrowed to its actual message and verified against production Next. A new complete CI run will verify the corrected commit; no failed run is counted as a release pass.
+The initial run, `40420713119` on `109d44e`, passed the credential-free build, typecheck, lint, 58 unit tests, 31 PostgreSQL tests and migration. Its browser suite found an ambiguous test locator: the production framework adds its own route-announcer alert. The connection-loss assertion was narrowed to its actual message and verified against production Next. The corrected run, [40422390513](https://github.com/yadneshSalvi/qloo-immersion/actions/runs/40422390513) on `e65f02e`, passed in two minutes: clean credential-free build, typecheck, lint, 58 unit tests, 31 PostgreSQL tests, migration and all 12 production browser tests. No failed run is counted as a release pass.
 
 ## Hosted release
 
-Cloud deployment and independent hosted acceptance are pending at this document revision. No local result above is presented as a hosted result.
+The [hosted application](https://immersion-web-dnp3wctt7a-uc.a.run.app) passed **14 independent acceptance checks** on 26 October 2026 UTC in 43.8 seconds. The run blocked paid provider endpoints and recorded zero attempts to call them, zero unexpected external requests, and zero browser errors. Both disposable guests were deleted afterward.
+
+The hosted pass covered fresh onboarding; source practice and save/reload; perfect fixed answers plus a hard self-report producing extra support without changing score, taste or A2 bands; next-session extra hints/source/translation and preserved choice; actual MP3 decoding, passage/keyboard seek and saved playback-rate override; 206 byte ranges, suffix ranges, HEAD and invalid-range rejection; foreign and anonymous media rejection; review scheduling and idempotency/conflict behavior; export, guest isolation, cross-origin and oversized-input rejection; five routes without overflow at 390px; accurate retention text; and scoped deletion.
+
+Cloud migration and runtime checks separately verified the instance-specific database CA, rejection of an unrelated CA, fifteen state-table grants, read-only access to the two catalog tables, and absence of administrative/schema/other-table access. The private worker rejects anonymous requests; the public app uses Secure/HttpOnly/SameSite=Lax guest cookies. Automatic Scheduler dispatch returned HTTP 200.
+
+The application image is `sha256:21961b5ad7176cfede3f533680d3525e0b6cf66b188c2e7be8e872151dd08275`, with web revision `immersion-web-00004-266` and worker revision `immersion-worker-00003-jpl`. Actual hosted provider observations are recorded separately from this provider-free acceptance run.
+
+## Demonstration film
+
+The reviewed 171-second export uses actual hosted product captures and an explicitly fictional learner. The final H.264/AAC file passed full decode, 17 decoded keyframe checks, 22 transition-frame checks and caption bounds/overlap validation. Encoded audio measured −14.54 LUFS and −1.51 dB true peak with no clipped samples. The editable preview was reviewed before rendering; the evidence and scope statements were checked against the hosted walkthrough. See [the release record](RELEASE.md#demonstration-film-verification) for the artifact hash and production details. No subjective human listening review is claimed.
+
+The [public film player](https://immersion-demo-dnp3wctt7a-uc.a.run.app) passed anonymous asset hash, MIME, HEAD and byte-range checks. Fresh-browser playback, seeking, optional English captions and error-free media loading were verified against the deployed service.

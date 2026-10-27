@@ -2,6 +2,8 @@
 
 **Follow your curiosity. Find your Spanish.**
 
+[Try the live application](https://immersion-web-dnp3wctt7a-uc.a.run.app) · [Watch the demo film](https://immersion-demo-dnp3wctt7a-uc.a.run.app) · [Submission story](SUBMISSION.md) · [Verification](docs/VERIFICATION.md)
+
 IMMERSION is a cultural reading and listening studio for English-speaking adults (18+) learning Spanish around **A2–B1 working bands**. Confirm a favorite, follow a cultural connection into an original story, practice its language, and keep useful expressions in a personal word notebook.
 
 The collection contains **36 original fictional Spanish stories written with AI assistance** across music, cinema, literature, food, design, and everyday places: **18 reading pieces and 18 reading/listening pieces**. Educator review is pending. The bands are starting recommendations, not certified CEFR assessments.
