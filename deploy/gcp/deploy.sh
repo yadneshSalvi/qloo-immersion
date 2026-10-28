@@ -26,7 +26,7 @@ common=(--image="$IMMERSION_IMAGE" --region="$IMMERSION_REGION" --network=immers
 worker_url=$("$gc" run services describe immersion-worker --region="$IMMERSION_REGION" --format='value(status.url)')
 ./deploy/gcp/scheduler.sh
 "$gc" run deploy immersion-web "${common[@]}" \
-  --service-account="$web_sa" --memory=512Mi --min=1 --max=2 --max-instances=2 --concurrency=20 --timeout=60 \
+  --service-account="$web_sa" --memory=512Mi --min=0 --max=2 --max-instances=2 --concurrency=20 --timeout=60 \
   --startup-probe=tcpSocket.port=8080,timeoutSeconds=1,periodSeconds=10,failureThreshold=24 \
   --no-invoker-iam-check --set-secrets="$db_secrets" \
   --set-env-vars="WORKER_AUTH_MODE=cloud-run,DATABASE_SSL_MODE=verify-ca,DATABASE_SSL_CA_FILE=/secrets/sql-ca.pem,DATABASE_POOL_MAX=4,LIVE_QLOO_ENABLED=1,LIVE_COACHING_ENABLED=1,WORKER_URL=$worker_url,GOOGLE_CLOUD_PROJECT=$IMMERSION_GCP_PROJECT,IMMERSION_TASKS_LOCATION=$IMMERSION_REGION,IMMERSION_TASKS_QUEUE=immersion-research,IMMERSION_TASKS_INVOKER_SERVICE_ACCOUNT=$invoker_sa"
